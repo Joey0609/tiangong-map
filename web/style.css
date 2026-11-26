@@ -499,15 +499,15 @@ li a {
 .leaflet-tooltip:before {
   display: none;
 }
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
+.leaflet-popup:not(.notam-info-popup) .leaflet-popup-content-wrapper,
+.leaflet-popup:not(.notam-info-popup) .leaflet-popup-tip {
   background: #183338;
   color: #e7f2ed;
 }
-.leaflet-popup-content {
+.leaflet-popup:not(.notam-info-popup) .leaflet-popup-content {
   font: 13px/1.5 inherit;
 }
-.leaflet-popup-content small {
+.leaflet-popup:not(.notam-info-popup) .leaflet-popup-content small {
   display: block;
 }
 dialog {

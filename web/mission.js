@@ -1,5 +1,5 @@
 import { $, esc, anchor, date, dialog } from "./ui.js";
-import { noticeId, returnLabel } from "./advisories.js";
+
 import { DAY, observer } from "./orbit.js";
 
 function row(title, detail = "") {
@@ -18,7 +18,6 @@ export function createMission(go, focusNotice) {
     mission,
     visibleNotices = [],
     lastMission = "",
-    returnKey = "",
     lastFeed = null;
   function returnState(t) {
     const headlines = (snapshot.news.data?.items || []).filter(
@@ -101,7 +100,6 @@ export function createMission(go, focusNotice) {
     mission = curated;
     lastMission = "";
     lastFeed = null;
-    returnKey = "";
     $("historyBtn").onclick = () =>
       dialog(
         "返回日期 · 历史样本",
@@ -129,13 +127,7 @@ export function createMission(go, focusNotice) {
           .map((x) => row(anchor(x.url, x.title), esc(x.date)))
           .join("") || "暂无公告",
       );
-    $("noticesBtn").onclick = () =>
-      dialog(
-        "所选时刻生效的通告",
-        visibleNotices
-          .map((n) => row(esc(n.code), esc(n.time) + " UTC<br>" + esc(n.text)))
-          .join("") || "无已知有效通告",
-      );
+    $("noticesBtn").onclick = () => { if (visibleNotices.length) focusNotice(visibleNotices[0]); };
     const links = {
       orbit: ["空间站官方星历", "https://www.cmse.gov.cn/gfgg/zgkjzgdcs/"],
       news: ["载人航天任务公告", "https://www.cmse.gov.cn/fxrw/SZ24/"],
@@ -165,31 +157,11 @@ export function createMission(go, focusNotice) {
       drawMission(t);
     }
     const items = snapshot.notices.data?.items || [];
-    visibleNotices = items.filter(
-      (n) =>
-        n.period?.length === 2 &&
-        n.period.every(Number.isFinite) &&
-        n.period[0] <= t &&
-        t < n.period[1],
-    );
-    $("noticeCount").textContent = visibleNotices.length + " 条生效";
-    const partial = snapshot.notices.data?.partial;
-    $("noticeHint").textContent =
-      "按选定时间筛选 · 任务关联待核实" +
-      (partial?.length ? " · 缺源 " + partial.join(", ").toUpperCase() : "");
-    // Show published return windows in advance, without calling them active.
-    const returns = items.filter(n => n.period?.length === 2 && n.period.every(Number.isFinite) && t < n.period[1] && returnLabel(n));
-    const entries = returns.map(n => [noticeId(n), t < n.period[0] ? "待开始" : "公告窗口内"]);
-    const upcoming = items.filter(n => n.period?.length === 2 && n.period.every(Number.isFinite) && t < n.period[0] && !returnLabel(n) && !/^\s*[^\n]*\bNOTAMC\b/i.test(n.text) && (n.circle || n.points?.length >= 3));
-    const rk = JSON.stringify([entries, upcoming.map(noticeId)]);
-    if (returnKey !== rk) {
-      returnKey = rk;
-      $("returnNotices").innerHTML = returns.length ? "<h3>返回航警</h3>" + returns.map((n,i) =>
-        '<div class="station line"><div><b>' + esc(n.code) + '</b><small>' + esc(returnLabel(n)) + ' · ' + entries[i][1] +
-        '</small></div><button data-return="' + i + '"' + (n.circle || n.points?.length >= 3 ? '' : ' disabled') + '>查看区域</button></div>').join('') : '';
-      if (upcoming.length) $("returnNotices").insertAdjacentHTML('beforeend', '<details><summary>待生效航警（' + upcoming.length + '）</summary>' + upcoming.map((n,i) => '<div class="station line"><div><b>' + esc(n.code) + '</b><small>' + date(n.period[0]) + ' 北京时间</small></div><button data-upcoming="' + i + '">查看区域</button></div>').join('') + '</details>');
-      $("returnNotices").querySelectorAll('button').forEach(b => { b.onclick = () => focusNotice(b.hasAttribute('data-return') ? returns[Number(b.dataset.return)] : upcoming[Number(b.dataset.upcoming)]); });
-    }
+    const target = items.find(n => n.code === "A6096/26" && n.id === "ZLHW_I_ZBBBYNYX_A6096_26" && n.source === "NOTAM");
+    visibleNotices = target ? [target] : [];
+    $("noticeCount").textContent = "A6096/26";
+    $("noticesBtn").disabled = !target;
+    $("noticeHint").textContent = !target ? "当前数据无此通告" : t < target.period[0] ? "待生效" : t < target.period[1] ? "公告窗口内" : "已结束";
     const contacts = mission.contacts.filter(
       (c) => Date.parse(c.start) <= t && t < Date.parse(c.end) && c.url,
     );
@@ -228,7 +200,7 @@ export function createMission(go, focusNotice) {
             }),
         );
     }
-    return { notices: [...new Map([...visibleNotices, ...returns, ...upcoming].map(n => [noticeId(n), n])).values()], stationStates: states };
+    return { notices: visibleNotices, stationStates: states };
   }
   return { set, render };
 }
