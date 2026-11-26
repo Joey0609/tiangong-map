@@ -275,9 +275,7 @@ export function createMap() {
       noticeLayers.clear();
         for (const n of notices) {
           const id = n.id;
-          const opts = { color: "#b34570", weight: 2, fillOpacity: 0.23, dashArray: "6 3" };
-          const pending = t < n.period[0];
-          if (pending) Object.assign(opts, { dashArray:'3 6', fillOpacity:0.08 });
+          const opts = { color: "#b34570", weight: 2, fillOpacity: t < n.period[0] ? 0.08 : 0.23 };
           let l;
           if (n.circle) {
             const [[y, x], r] = n.circle;
@@ -298,7 +296,6 @@ export function createMap() {
               ref.addTo(map);
               l.once('remove', () => ref.remove());
             }
-            l.bindTooltip(esc(n.code), {permanent:true, direction:'center', className:'return-label'});
             bindNotice(l, n);
           }
         }
