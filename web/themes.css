@@ -1,0 +1,15 @@
+.base-switch{display:flex;background:#071b20;padding:3px;border-radius:7px;border:1px solid var(--line)}.base-switch button{font-size:12px;padding:3px 12px;color:var(--muted)}.base-switch [aria-pressed=true]{background:#345047;color:var(--ink)}.toggle[hidden]{display:none}select{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:3px}
+body[data-theme=vector]{color-scheme:light;--sea:#d5e8ed;--card:#fffffff2;--line:#cddad5;--muted:#526660;--mint:#126a51;--ink:#142d27;background:var(--sea);color:var(--ink)}
+[data-theme=vector] #map{background:#d6e9ec}[data-theme=vector] header,[data-theme=vector] .timeline,[data-theme=vector] .telemetry,[data-theme=vector] dialog{background:#fffffff5;color:var(--ink)}
+[data-theme=vector] .rail button{color:#465e55}[data-theme=vector] button:hover{background:#e0eee6}[data-theme=vector] .rail .active,[data-theme=vector] .base-switch [aria-pressed=true]{background:#d5eade;color:#125438}
+[data-theme=vector] .base-switch{background:#f1f5f3}[data-theme=vector] .elevation{background:#e8f3eb;border-color:#c7dece}[data-theme=vector] .elevation strong{color:#145844}
+[data-theme=vector] .label{color:#3f5951}[data-theme=vector] .label.on{color:#105b41}[data-theme=vector] .view p,[data-theme=vector] .pad p,[data-theme=vector] .timeline time{color:#415c50}
+[data-theme=vector] .pass,[data-theme=vector] .station,[data-theme=vector] .source,[data-theme=vector] .row,[data-theme=vector] .maptools button+button{border-color:#d8e4dd}
+[data-theme=vector] .orbit-logo{border-color:#21684d}[data-theme=vector] .orbit-logo:after{background:#21684d}
+[data-theme=vector] .leaflet-tooltip,[data-theme=vector] .leaflet-popup-content-wrapper,[data-theme=vector] .leaflet-popup-tip{color:#153a2b;background:#fffffff2;border-color:#97b7a4}
+[data-theme=vector] .leaflet-control-attribution{background:#fffdf3e6!important;color:#45584c}
+[data-theme=vector] .legend i:nth-child(2){border-color:#ab4e13}[data-theme=vector] dialog input{background:#f4f7f3;color:var(--ink);border-color:#afc3b7}
+[data-theme=vector] .primary{background:#17583f;color:white}[data-theme=vector] #status:not(:empty){background:#fffaf0;color:#324a38}
+@media(max-width:560px){header{gap:6px}.base-switch button{padding:2px 6px}.clock small{display:none}#mode{font-size:11px}.clock time{font-size:12px}.brand{gap:8px}h1{font-size:14px}#refresh{width:23px}.orbit-logo:after{left:16px}}
+@media(max-width:380px){.clock{display:none}}
+

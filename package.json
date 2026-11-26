@@ -1,0 +1,8 @@
+{
+  "name": "tiangong-map",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/verify.mjs"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "refreshed": "2026-11-26T20:06:30+08:00",
+  "name": "神舟二十三号",
+  "landing": "东风着陆场",
+  "arrival": "2026-11-25",
+  "crewReturn": [
+    "张志远",
+    "黎家盈",
+    "穆罕默德·齐尚·阿里"
+  ],
+  "crewStay": [
+    "汤洪波",
+    "武毅",
+    "朱杨柱"
+  ],
+  "officialReturn": null,
+  "events": [
+    {
+      "at": "2026-11-25T08:18:00+08:00",
+      "title": "神舟二十四号发射",
+      "url": "https://www.cmse.gov.cn/xwzx/202611/t20261125_57891.html"
+    },
+    {
+      "at": "2026-11-25T11:56:00+08:00",
+      "title": "对接天和核心舱前向端口",
+      "url": "https://www.cmse.gov.cn/xwzx/202611/t20261125_57897.html"
+    },
+    {
+      "at": "2026-11-25T14:35:00+08:00",
+      "title": "两乘组在轨会合",
+      "url": "https://www.cmse.gov.cn/xwzx/202611/t20261125_57903.html"
+    },
+    {
+      "at": "2026-11-26T20:06:30+08:00",
+      "title": "央视报道东风着陆场返回演练",
+      "url": "https://news.cctv.com/2026/11/26/ARTIu68RXcpIVJvRcK0lJsVq261126.shtml"
+    }
+  ],
+  "history": [
+    {
+      "name": "神舟十六号",
+      "arrival": "2023-10-26",
+      "landing": "2023-10-31",
+      "arrivalSource": "https://www.cmse.gov.cn/fxrw/SZ17/",
+      "landingSource": "https://www.cmse.gov.cn/fxrw/SZ16/"
+    },
+    {
+      "name": "神舟十七号",
+      "arrival": "2024-04-26",
+      "landing": "2024-04-30",
+      "arrivalSource": "https://www.cmse.gov.cn/fxrw/SZ18/",
+      "landingSource": "https://www.cmse.gov.cn/fxrw/SZ17/"
+    },
+    {
+      "name": "神舟十八号",
+      "arrival": "2024-10-30",
+      "landing": "2024-11-04",
+      "arrivalSource": "https://www.cmse.gov.cn/fxrw/SZ19/",
+      "landingSource": "https://www.cmse.gov.cn/fxrw/SZ18/"
+    },
+    {
+      "name": "神舟十九号",
+      "arrival": "2025-04-25",
+      "landing": "2025-04-30",
+      "arrivalSource": "https://www.cmse.gov.cn/fxrw/SZ20/",
+      "landingSource": "https://www.cmse.gov.cn/fxrw/SZ19/"
+    }
+  ],
+  "stations": [
+    {
+      "id": "miyun",
+      "name": "密云站",
+      "lat": 40.38,
+      "lon": 116.84,
+      "source": "https://lssf.cas.cn/sszs/gykj/zgygwx/ssjj/202503/t20250314_5050280.html"
+    },
+    {
+      "id": "sanya",
+      "name": "三亚站",
+      "lat": 18.25,
+      "lon": 109.51,
+      "source": "https://lssf.cas.cn/sszs/gykj/zgygwx/ssjj/202503/t20250314_5050280.html"
+    },
+    {
+      "id": "kashi",
+      "name": "喀什站",
+      "lat": 39.47,
+      "lon": 75.99,
+      "source": "https://lssf.cas.cn/sszs/gykj/zgygwx/ssjj/202503/t20250314_5050280.html"
+    }
+  ],
+  "contacts": []
+}
