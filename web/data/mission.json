@@ -71,31 +71,119 @@
       "id": "xian-center",
       "name": "西安卫星测控中心",
       "episode": "神舟十三号 · 承担发射及快速自主交会对接测控任务",
-      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml"
+      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml",
+      "cityReference": {
+        "name": "西安市人民政府",
+        "lat": 34.3447314,
+        "lon": 108.9350903,
+        "source": "https://www.openstreetmap.org/way/496760604"
+      }
     },
     {
       "id": "weinan",
       "name": "渭南测控站",
       "episode": "神舟十三号发射 · “渭南，发现目标！”",
-      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml"
+      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml",
+      "cityReference": {
+        "name": "渭南市人民政府",
+        "lat": 34.5217487,
+        "lon": 109.4657708,
+        "source": "https://www.openstreetmap.org/node/9833752670"
+      }
     },
     {
       "id": "qingdao",
       "name": "青岛测控站",
       "episode": "神舟十三号发射 · “青岛，USB、雷达跟踪正常！”",
-      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml"
+      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml",
+      "cityReference": {
+        "name": "青岛市政府",
+        "lat": 36.0668862,
+        "lon": 120.3775232,
+        "source": "https://www.openstreetmap.org/node/11432724805"
+      }
     },
     {
       "id": "dongfeng",
       "name": "东风测控站",
       "episode": "神舟十八号返回 · “青山发现目标。”",
-      "source": "https://www.stdaily.com/web/gdxw/2024-11/05/content_253038.html"
+      "source": "https://www.stdaily.com/web/gdxw/2024-11/05/content_253038.html",
+      "cityReference": {
+        "name": "酒泉市政府",
+        "lat": 39.7319941,
+        "lon": 98.4936675,
+        "source": "https://www.openstreetmap.org/way/147541244"
+      }
     },
     {
       "id": "kashi",
       "name": "喀什测控站",
       "episode": "神舟六号返回 · 报道记载发现目标，未引述原话",
-      "source": "https://news.sina.com.cn/c/2005-10-17/17478035085.shtml"
+      "source": "https://news.sina.com.cn/c/2005-10-17/17478035085.shtml",
+      "cityReference": {
+        "name": "喀什市人民政府",
+        "lat": 39.467889,
+        "lon": 75.990768,
+        "source": "https://www.openstreetmap.org/node/13987346484"
+      }
+    },
+    {
+      "id": "xiamen",
+      "name": "厦门测控站",
+      "episode": "神舟十三号 · 公开报道记载入轨后接力测控",
+      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml",
+      "cityReference": {
+        "name": "厦门市政府",
+        "lat": 24.4823607,
+        "lon": 118.0842274,
+        "source": "https://www.openstreetmap.org/way/544546692"
+      }
+    },
+    {
+      "id": "hotan",
+      "name": "和田活动测控分队",
+      "episode": "用户提供的城市关联 · 当次任务待核实",
+      "cityReference": {
+        "name": "和田市人民政府",
+        "lat": 37.1125013,
+        "lon": 79.9107397,
+        "source": "https://www.openstreetmap.org/way/1381295830"
+      }
+    },
+    {
+      "id": "jiamusi",
+      "name": "佳木斯深空测控站",
+      "episode": "用户提供的城市关联 · 神舟任务关联待核实",
+      "cityReference": {
+        "name": "佳木斯市人民政府",
+        "lat": 46.7975888,
+        "lon": 130.3111507,
+        "source": "https://www.openstreetmap.org/node/10989665113"
+      }
+    },
+    {
+      "id": "beijing-control",
+      "name": "北京航天飞行控制中心",
+      "episode": "神舟六号返回 · 公开报道记载飞控中心接收飞船报告",
+      "source": "https://news.sina.com.cn/c/2005-10-17/17478035085.shtml",
+      "cityReference": {
+        "name": "北京市人民政府",
+        "lat": 39.9038918,
+        "lon": 116.7184753,
+        "source": "https://www.openstreetmap.org/way/653984468"
+      }
+    },
+    {
+      "id": "recovery-one",
+      "name": "回收一号",
+      "episode": "神舟六号历史口令 · 包头为用户提供的城市关联",
+      "source": "https://news.sina.com.cn/c/2005-10-17/17478035085.shtml",
+      "cityReference": {
+        "name": "包头市人民政府",
+        "lat": 40.6200187,
+        "lon": 109.9472846,
+        "source": "https://www.openstreetmap.org/node/10015723342"
+      }
     }
   ],
   "contacts": []

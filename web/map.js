@@ -1,3 +1,4 @@
+import { areaCenter } from './area-center.js';
 import { noticeId, returnLabel, bindNotice } from "./advisories.js";
 import { basemap } from "./basemap.js";
 import { position, geodetic, observer } from "./orbit.js";
@@ -16,7 +17,7 @@ export function createMap() {
     preferCanvas: true,
   });
   map.attributionControl.setPrefix(false);
-  map.attributionControl.addAttribution("Natural Earth · Leaflet");
+  map.attributionControl.addAttribution('Natural Earth · Leaflet · 城市代标 © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>');
   map.createPane("fallback");
   map.getPane("fallback").style.zIndex = 180;
   map.getPane("fallback").style.pointerEvents = "none";
@@ -240,6 +241,10 @@ export function createMap() {
           if (located) dot(s.lat, s.lon, s.name, true).bindPopup(
             esc(s.name),
           );
+          else if (s.cityReference) {
+            const c = s.cityReference, title = s.name + " · 市政府代标";
+            dot(c.lat, c.lon, title, false).bindPopup(esc(title) + "<br>" + esc(c.name));
+          }
     }
     connect.clearLayers();
     function line(s, color, dash) {
@@ -268,7 +273,7 @@ export function createMap() {
     if (!$("noticesOn").checked) hidden.clear();
     const nkey = JSON.stringify([
       version,
-      notices.map((n) => [n.id, n.code]),
+      notices.map((n) => [n.id, n.code, t < n.period[0]]),
       $("noticesOn").checked,
       Math.round(center / 90),
     ]);
@@ -281,6 +286,8 @@ export function createMap() {
           const id = noticeId(n), label = returnLabel(n);
           if (hidden.has(id)) continue;
           const opts = label ? { color: "#b34570", weight: 2, fillOpacity: 0.23, dashArray: "6 3" } : { color: "#d9ac72", weight: 1.2, fillOpacity: 0.14 };
+          const pending = t < n.period[0];
+          if (pending) Object.assign(opts, { dashArray:'3 6', fillOpacity:0.08 });
           let l;
           if (n.circle) {
             const [[y, x], r] = n.circle;
@@ -296,6 +303,13 @@ export function createMap() {
             l.addTo(areas);
             noticeLayers.set(id, l);
             if (label) l.bindTooltip(esc(label) + ' · ' + esc(n.code), { permanent:true, direction:'center', className:'return-label' });
+            const c = areaCenter(n);
+            if (c) {
+              const ref = L.circleMarker([c[0], near(c[1], center)], { radius:4, weight:2, color:'#fff', fillColor:'#763d81', fillOpacity:1, interactive:false });
+              l.on('popupopen', () => ref.addTo(map));
+              l.on('popupclose remove', () => ref.remove());
+            }
+            if (!label) l.bindTooltip(esc(n.code) + (pending ? ' · 待生效' : ' · 公告窗口内'));
             bindNotice(l, n, () => { hidden.add(id); areas.removeLayer(l); noticeLayers.delete(id); });
           }
         }
