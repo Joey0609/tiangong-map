@@ -68,6 +68,12 @@
   ],
   "stations": [
     {
+      "id": "xian-center",
+      "name": "西安卫星测控中心",
+      "episode": "神舟十三号 · 承担发射及快速自主交会对接测控任务",
+      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml"
+    },
+    {
       "id": "weinan",
       "name": "渭南测控站",
       "episode": "神舟十三号发射 · “渭南，发现目标！”",

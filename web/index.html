@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="vendor/leaflet.css" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="themes.css" />
+    <link rel="stylesheet" href="advisories.css" />
   </head>
   <body>
     <main>
@@ -109,6 +110,7 @@
             ><button id="noticesBtn" class="link">查看通告 <svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#arrow-up-right"></use></svg></button>
           </div>
           <small id="noticeHint"></small>
+          <div id="returnNotices"></div>
         </section>
         <section id="sources" class="view" hidden>
           <div id="sourceList"></div>
@@ -139,6 +141,7 @@
           </div>
         </div>
       </div>
+      <button id="cancelPick" hidden>取消选点</button>
       <div id="status" role="status" aria-live="polite"></div>
     </main>
     <dialog id="editor">
@@ -148,6 +151,7 @@
           <button type="button" class="close" aria-label="关闭"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#x"></use></svg></button>
         </div>
         <div class="pad">
+          <button type="button" class="link" id="pickSite">地图选点</button>
           <label>名称<input name="name" maxlength="32" required /></label>
           <div class="fields">
             <label

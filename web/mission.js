@@ -1,4 +1,5 @@
 import { $, esc, anchor, date, dialog } from "./ui.js";
+import { noticeId, returnLabel } from "./advisories.js";
 import { DAY, observer } from "./orbit.js";
 
 function row(title, detail = "") {
@@ -12,11 +13,12 @@ function row(title, detail = "") {
 const dayNumber = (v) => Date.parse(v + "T00:00:00+08:00");
 const dayLabel = (v) => date(v, { month: "numeric", day: "numeric" });
 
-export function createMission(go) {
+export function createMission(go, focusNotice) {
   let snapshot,
     mission,
     visibleNotices = [],
     lastMission = "",
+    returnKey = "",
     lastFeed = null;
   function returnState(t) {
     const headlines = (snapshot.news.data?.items || []).filter(
@@ -99,6 +101,7 @@ export function createMission(go) {
     mission = curated;
     lastMission = "";
     lastFeed = null;
+    returnKey = "";
     $("historyBtn").onclick = () =>
       dialog(
         "返回日期 · 历史样本",
@@ -174,6 +177,17 @@ export function createMission(go) {
     $("noticeHint").textContent =
       "按选定时间筛选 · 任务关联待核实" +
       (partial?.length ? " · 缺源 " + partial.join(", ").toUpperCase() : "");
+    // Show published return windows in advance, without calling them active.
+    const returns = items.filter(n => n.period?.length === 2 && n.period.every(Number.isFinite) && t < n.period[1] && returnLabel(n));
+    const entries = returns.map(n => [noticeId(n), t < n.period[0] ? "待开始" : "公告窗口内"]);
+    const rk = JSON.stringify(entries);
+    if (returnKey !== rk) {
+      returnKey = rk;
+      $("returnNotices").innerHTML = returns.length ? "<h3>返回航警</h3>" + returns.map((n,i) =>
+        '<div class="station line"><div><b>' + esc(n.code) + '</b><small>' + esc(returnLabel(n)) + ' · ' + entries[i][1] +
+        '</small></div><button data-return="' + i + '"' + (n.circle || n.points?.length >= 3 ? '' : ' disabled') + '>查看区域</button></div>').join('') : '';
+      $("returnNotices").querySelectorAll('button').forEach(b => { b.onclick = () => focusNotice(returns[Number(b.dataset.return)]); });
+    }
     const contacts = mission.contacts.filter(
       (c) => Date.parse(c.start) <= t && t < Date.parse(c.end) && c.url,
     );
@@ -211,7 +225,7 @@ export function createMission(go) {
             }),
         );
     }
-    return { notices: visibleNotices, stationStates: states };
+    return { notices: [...new Map([...visibleNotices, ...returns].map(n => [noticeId(n), n])).values()], stationStates: states };
   }
   return { set, render };
 }

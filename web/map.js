@@ -1,3 +1,4 @@
+import { noticeId, returnLabel, bindNotice } from "./advisories.js";
 import { basemap } from "./basemap.js";
 import { position, geodetic, observer } from "./orbit.js";
 import { $, esc, toast, icon } from "./ui.js";
@@ -24,6 +25,8 @@ export function createMap() {
     paths = L.layerGroup().addTo(map);
   const pins = L.layerGroup().addTo(map),
     areas = L.layerGroup().addTo(map);
+  const noticeLayers = new Map(), hidden = new Set();
+  let pendingPick = null;
   const connect = L.layerGroup().addTo(map);
   const marker = L.marker([0, 0], {
     icon: L.divIcon({
@@ -262,6 +265,7 @@ export function createMap() {
         if (confirmed?.kind === "direct") line(s, "#399364", null);
         else if (isUp) line(s, theme === "vector" ? "#226c65" : "#c1f1df", "3 4");
       }
+    if (!$("noticesOn").checked) hidden.clear();
     const nkey = JSON.stringify([
       version,
       notices.map((n) => [n.id, n.code]),
@@ -271,9 +275,12 @@ export function createMap() {
     if (nkey !== noticeKey) {
       noticeKey = nkey;
       areas.clearLayers();
+      noticeLayers.clear();
       if ($("noticesOn").checked)
         for (const n of notices) {
-          const opts = { color: "#d9ac72", weight: 1.2, fillOpacity: 0.14 };
+          const id = noticeId(n), label = returnLabel(n);
+          if (hidden.has(id)) continue;
+          const opts = label ? { color: "#b34570", weight: 2, fillOpacity: 0.23, dashArray: "6 3" } : { color: "#d9ac72", weight: 1.2, fillOpacity: 0.14 };
           let l;
           if (n.circle) {
             const [[y, x], r] = n.circle;
@@ -285,15 +292,12 @@ export function createMap() {
               opts,
             );
           }
-          if (l)
-            l.addTo(areas).bindPopup(
-              "<b>" +
-                esc(n.code) +
-                "</b><small>" +
-                esc(n.time) +
-                " UTC</small>" +
-                esc(n.text).slice(0, 450),
-            );
+          if (l) {
+            l.addTo(areas);
+            noticeLayers.set(id, l);
+            if (label) l.bindTooltip(esc(label) + ' · ' + esc(n.code), { permanent:true, direction:'center', className:'return-label' });
+            bindNotice(l, n, () => { hidden.add(id); areas.removeLayer(l); noticeLayers.delete(id); });
+          }
         }
     }
   }
@@ -304,8 +308,31 @@ export function createMap() {
       : toast("所选时间无轨道数据");
   $("zoomIn").onclick = () => map.zoomIn(1);
   $("zoomOut").onclick = () => map.zoomOut(1);
+  function finishPick(point) {
+    if (!pendingPick) return;
+    const done = pendingPick; pendingPick = null;
+    map.getContainer().classList.remove('picking'); $("cancelPick").hidden = true;
+    done(point);
+  }
+  map.on('click', e => { if (pendingPick) finishPick(e.latlng.wrap()); });
+  $("cancelPick").onclick = () => finishPick(null);
+  document.addEventListener('keydown', e => { if (pendingPick && e.key === 'Escape') { e.preventDefault(); finishPick(null); } });
   return {
     paint,
+    pick(done) {
+      pendingPick = done; map.closePopup(); map.getContainer().classList.add('picking');
+      $("cancelPick").hidden = false; map.getContainer().focus();
+    },
+    focusNotice(n, redraw) {
+      const id = noticeId(n); hidden.delete(id); $("noticesOn").checked = true;
+      const coords = n.circle ? [n.circle[0]] : n.points;
+      if (!coords?.length) return;
+      let last = coords[0][1];
+      const bounds = L.latLngBounds(coords.map(([lat, lon]) => [lat, last = near(lon, last)]));
+      map.fitBounds(bounds, {maxZoom:6, padding:[38,38], animate:false});
+      noticeKey = ''; redraw();
+      noticeLayers.get(id)?.openPopup();
+    },
     go: (lat, lon) => map.setView([lat, lon], Math.max(4, map.getZoom())),
   };
 }
