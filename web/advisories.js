@@ -32,7 +32,7 @@ export function bindNotice(layer, n, hide) {
       const action = b.dataset.action;
       if (action === 'raw') { const r = box.querySelector('[data-original]'); r.hidden = !r.hidden; box.querySelector('[data-structured]').hidden = !r.hidden; b.setAttribute('aria-pressed',String(!r.hidden)); }
       if (action === 'copy') { try { await navigator.clipboard.writeText(raw); toast('已复制原始报文'); } catch { toast('复制失败，可在原文视图中选择文本'); } }
-      if (action === 'pin') { const pin = popup.options.autoClose !== false; popup.options.autoClose = !pin; popup.options.closeOnClick = !pin; const map = popup._map; map.off("preclick", popup.close, popup); if (!pin) map.on("preclick", popup.close, popup); b.setAttribute('aria-pressed',String(pin)); }
+      if (action === 'pin') { const pin = popup.options.autoClose !== false; popup.options.autoClose = !pin; popup.options.closeOnClick = !pin; const map = popup._map; if (!map) return; map.off("preclick", popup.close, popup); if (!pin) map.on("preclick", popup.close, popup); b.setAttribute('aria-pressed',String(pin)); }
       if (action === 'hide') { if (b.dataset.confirm) hide(); else { b.dataset.confirm='1'; b.textContent='确认'; b.setAttribute('aria-label','确认隐藏航警'); } }
       if (action === 'close') layer.closePopup();
     };
