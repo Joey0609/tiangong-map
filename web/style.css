@@ -1,15 +1,743 @@
-:root{color-scheme:dark;--sea:#0c222a;--card:#10272ddd;--line:#30474c;--muted:#a2b7b6;--mint:#a8ebbf;--ink:#eff6f1;font:14px/1.55 "Inter","Microsoft YaHei UI","Microsoft YaHei",sans-serif;color:var(--ink)}
-*{box-sizing:border-box}body{margin:0;background:var(--sea)}main,#map{height:100dvh;width:100%;position:relative;overflow:hidden}#map{background:radial-gradient(at 40% 46%,#193940,#0c222a 80%);z-index:0}.leaflet-container{font:inherit}.leaflet-control-attribution{background:#10262be6!important;color:var(--muted);font-size:11px!important}.leaflet-control-attribution a{color:var(--mint)!important}
-h1,h2,h3,h4,p,ol,dl{margin:0}h1{font-size:20px;letter-spacing:.08em}h2{font-size:16px}h3{font-size:15px}small,.muted,.mono{font-size:12px;color:var(--muted)}a,.link{color:var(--mint)}a{text-decoration:none}a:hover,.link:hover{text-decoration:underline}button{font:inherit;color:inherit;cursor:pointer;border:0;background:transparent;border-radius:6px}button:hover{background:#365456}button:focus-visible,input:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
-header,.rail,.maptools,aside,.timeline,.telemetry{position:absolute;background:var(--card);border:1px solid var(--line);box-shadow:0 5px 28px #05131750;backdrop-filter:blur(14px);border-radius:12px}
-header{top:16px;left:18px;right:18px;height:55px;display:flex;align-items:center;gap:18px;padding:0 16px;background:#11292ef2}.brand,.line,.subhead,.panel-head,.site-title,.clock,.legend,.telemetry,.craft{display:flex;align-items:center}.brand{gap:14px}.orbit-logo{height:26px;width:26px;border:2px solid #a9e8bd;border-radius:50%;transform:rotate(-32deg);position:relative}.orbit-logo:before{content:"";position:absolute;inset:7px -8px;border:1.5px solid var(--mint);border-radius:50%}.orbit-logo:after{content:"";position:absolute;width:5px;height:5px;border-radius:100%;background:#fff;top:5px;left:25px}.head-divider{height:18px;border-left:1px solid var(--line)}#mode{font-size:12px;color:var(--mint)}#mode:before,.label.on:before{content:"";display:inline-block;width:6px;height:6px;background:currentColor;border-radius:100%;vertical-align:2px;margin-right:7px}.spacer{flex:1}.clock{gap:10px}.clock time,.mono,.telemetry span,time,.pass b{font-family:"IBM Plex Mono",Consolas,monospace;font-variant-numeric:tabular-nums}.clock time{font-size:18px}.clock small{font-size:11px}#refresh{font-size:22px;width:34px;height:34px}
-.rail{top:88px;left:18px;display:flex;flex-direction:column;padding:5px;gap:4px}.rail button{width:51px;height:56px;color:#c0d0d0;font-size:11px}.rail i{display:block;font:24px/27px "Segoe UI Symbol",sans-serif}.rail .active{color:var(--mint);background:#28473f}.maptools{bottom:152px;left:18px;display:grid;padding:3px}.maptools button{width:32px;height:31px;font-size:20px}.maptools button+button{border-top:1px solid #30484c}
-aside{right:18px;top:88px;width:290px;max-height:calc(100dvh - 218px);overflow:auto;scrollbar-width:thin;transition:opacity .18s,transform .18s}aside.folded{transform:translateX(110%);opacity:0;pointer-events:none;visibility:hidden}.panel-head{justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--line)}.close{font-size:21px;width:30px;height:28px;line-height:1;color:var(--muted)}.view,.pad{padding:17px}.view[hidden]{display:none}.view{animation:open .16s ease-out}.line,.subhead{justify-content:space-between;gap:9px}.link{padding:2px 0;font-size:12px}.link:hover{background:transparent}.mono{margin-top:2px}.elevation{margin-top:17px;padding:13px;border:1px solid #36574e;border-radius:8px;background:linear-gradient(110deg,#22423b,#173431)}.elevation strong{font:500 34px/1.3 Consolas,monospace;color:#c8f5d7}.label{font-size:11px;border:1px solid var(--line);padding:2px 6px;border-radius:4px;color:#c4d2cd}.label.on{color:var(--mint);border-color:#4e8060}.pair,.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair{padding:13px 0}.pair small,.pair b{display:block}.pair b{font:600 17px Consolas,monospace}.subhead{border-top:1px solid var(--line);padding-top:13px;margin:6px 0}.pass,.station,.source,.row{padding:9px 0;border-bottom:1px solid #2c4548}.pass:last-child,.source:last-child{border:0}.pass b,.row b{font-size:13px}.pass small,.source small,.row small,.station small{display:block}.pass button,.station button{padding:2px 5px;color:var(--mint)}.pass{display:flex;align-items:center;justify-content:space-between}.toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 0}.toggle input{accent-color:var(--mint);width:18px;height:18px}#window{font-size:26px;color:var(--mint);line-height:1.5}.view p,.pad p{font-size:13px;color:#bfceca;margin:6px 0}.view>small{display:block;margin-top:7px}.view dl{margin:12px 0}.view dl div{display:grid;grid-template-columns:54px 1fr;gap:8px;font-size:12px;margin:5px 0}dt{color:var(--muted)}dd{margin:0}ol{list-style:none;padding:0}li{padding:7px 0 7px 14px;border-left:1px solid #4b7766}li small{display:block}li a{color:var(--ink);font-size:13px}
-.bottom{position:absolute;left:18px;right:18px;bottom:22px;pointer-events:none}.timeline,.telemetry{position:relative;pointer-events:auto}.timeline{padding:9px 16px;max-width:760px;margin:auto;background:#10282df2}.timeline b{font-size:13px}.timeline time{margin-right:auto;color:#c1d2d1;font-size:12px}.timeline small{font-size:11px}.timeline input{width:100%;height:4px;display:block;margin:11px 0;accent-color:var(--mint);cursor:pointer}.telemetry{display:flex;align-items:center;gap:12px;width:max-content;max-width:100%;padding:7px 12px;margin:0 auto 6px;background:#0e242bec}.telemetry span{font-size:12px}.craft{gap:9px}.craft b{font-size:12px}.legend{gap:6px;font-size:11px}.legend i{width:18px;border-top:2px solid var(--mint)}.legend i:nth-child(2){border-top:2px dashed #e6bb77;margin-left:6px}
-.spacecraft{display:inline-block;position:relative;width:22px;height:9px;background:repeating-linear-gradient(90deg,#96cdaf 0 4px,#376148 4px 5px);transform:rotate(-25deg);border:1px solid #bce9ba}.spacecraft:after{content:"";position:absolute;left:8px;top:-4px;width:4px;height:14px;background:#f4f0d5;border-radius:2px}.sat-icon{display:grid;place-items:center}.sat-icon .spacecraft{transform:rotate(-28deg) scale(1.35);filter:drop-shadow(0 0 5px #77f6ad)}.dot{background:#f4c57e;border:2px solid #0c262a;border-radius:100%;box-shadow:0 0 0 1px #e3b46b}.dot.station-dot{background:#80b7b5;box-shadow:0 0 0 1px #819b9d}.map-label{color:#839f9f;font-size:12px;letter-spacing:.12em;text-align:center;white-space:nowrap;pointer-events:none}.leaflet-tooltip{background:#10272de8;color:#e2efe4;border:1px solid #567469;border-radius:4px;padding:2px 6px;font:12px/1.5 inherit;box-shadow:none}.leaflet-tooltip:before{display:none}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#183338;color:#e7f2ed}.leaflet-popup-content{font:13px/1.5 inherit}.leaflet-popup-content small{display:block}
-dialog{background:#142d32;color:var(--ink);border:1px solid #416063;border-radius:12px;width:min(440px,93vw);padding:0;max-height:82dvh}dialog::backdrop{background:#031014aa}dialog[open]{animation:open .2s ease-out}dialog label{display:block;color:var(--muted);font-size:12px;margin-bottom:12px}dialog input{display:block;margin-top:4px;background:#0d2227;border:1px solid #456367;border-radius:5px;width:100%;padding:9px;color:var(--ink);font:14px inherit}.primary{background:var(--mint);color:#16362a;padding:8px 14px;font-weight:bold}.primary:hover{background:#c9f3cf}#status:not(:empty){position:absolute;top:79px;left:50%;transform:translateX(-50%);padding:6px 12px;background:#243c37;border:1px solid #607852;border-radius:6px;font-size:12px;z-index:5}
-@keyframes open{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:700px){header{top:8px;left:8px;right:8px;height:47px;gap:9px;padding:0 10px}h1{font-size:16px}.orbit-logo{width:19px;height:19px}.brand{gap:10px}.clock{display:block;text-align:right;line-height:1.1}.clock time{font-size:14px}.clock small{display:block}.rail{top:65px;left:8px}.rail button{height:43px;width:36px}.rail i{font-size:18px;line-height:21px}aside{right:8px;top:65px;width:min(262px,calc(100vw - 75px));max-height:calc(100dvh - 220px)}.bottom{left:8px;right:8px;bottom:22px}.telemetry{gap:7px;padding:5px 7px}.telemetry span{font-size:11px}.maptools{left:8px;bottom:145px}.timeline{padding:7px 9px}.legend{gap:3px}.timeline time{font-size:11px}.view,.pad{padding:13px}.panel-head{padding:8px 12px}.head-divider{display:none}}
-@media(max-height:550px){aside{max-height:calc(100dvh - 85px)}.maptools{left:90px;bottom:112px}.rail button{height:38px}.rail i{font-size:17px;line-height:18px}.timeline{max-width:55vw;margin-left:0}.telemetry{margin-left:0}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
+:root {
+  color-scheme: dark;
+  --sea: #0c222a;
+  --card: #10272ddd;
+  --line: #30474c;
+  --muted: #a2b7b6;
+  --mint: #a8ebbf;
+  --ink: #eff6f1;
+  font:
+    14px/1.55 "Inter",
+    "Microsoft YaHei UI",
+    "Microsoft YaHei",
+    sans-serif;
+  color: var(--ink);
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--sea);
+}
+main,
+#map {
+  height: 100dvh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+#map {
+  background: radial-gradient(at 40% 46%, #193940, #0c222a 80%);
+  z-index: 0;
+}
+.leaflet-container {
+  font: inherit;
+}
+.leaflet-control-attribution {
+  background: #10262be6 !important;
+  color: var(--muted);
+  font-size: 11px !important;
+}
+.leaflet-control-attribution a {
+  color: var(--mint) !important;
+}
+h1,
+h2,
+h3,
+h4,
+p,
+ol,
+dl {
+  margin: 0;
+}
+h1 {
+  font-size: 20px;
+  letter-spacing: 0.08em;
+}
+h2 {
+  font-size: 16px;
+}
+h3 {
+  font-size: 15px;
+}
+small,
+.muted,
+.mono {
+  font-size: 12px;
+  color: var(--muted);
+}
+a,
+.link {
+  color: var(--mint);
+}
+a {
+  text-decoration: none;
+}
+a:hover,
+.link:hover {
+  text-decoration: underline;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  border-radius: 6px;
+}
+button:hover {
+  background: #365456;
+}
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 2px;
+}
+header,
+.rail,
+.maptools,
+aside,
+.timeline,
+.telemetry {
+  position: absolute;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: 0 5px 28px #05131750;
+  backdrop-filter: blur(14px);
+  border-radius: 12px;
+}
+header {
+  top: 16px;
+  left: 18px;
+  right: 18px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 16px;
+  background: #11292ef2;
+}
+.brand,
+.line,
+.subhead,
+.panel-head,
+.site-title,
+.clock,
+.legend,
+.telemetry,
+.craft {
+  display: flex;
+  align-items: center;
+}
+.brand {
+  gap: 14px;
+}
+.orbit-logo {
+  height: 26px;
+  width: 26px;
+  border: 2px solid #a9e8bd;
+  border-radius: 50%;
+  transform: rotate(-32deg);
+  position: relative;
+}
+.orbit-logo:before {
+  content: "";
+  position: absolute;
+  inset: 7px -8px;
+  border: 1.5px solid var(--mint);
+  border-radius: 50%;
+}
+.orbit-logo:after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 100%;
+  background: #fff;
+  top: 5px;
+  left: 25px;
+}
+.head-divider {
+  height: 18px;
+  border-left: 1px solid var(--line);
+}
+#mode {
+  font-size: 12px;
+  color: var(--mint);
+}
+#mode:before,
+.label.on:before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 100%;
+  vertical-align: 2px;
+  margin-right: 7px;
+}
+.spacer {
+  flex: 1;
+}
+.clock {
+  gap: 10px;
+}
+.clock time,
+.mono,
+.telemetry span,
+time,
+.pass b {
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.clock time {
+  font-size: 18px;
+}
+.clock small {
+  font-size: 11px;
+}
+#refresh {
+  font-size: 22px;
+  width: 34px;
+  height: 34px;
+}
+.rail {
+  top: 88px;
+  left: 18px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  gap: 4px;
+}
+.rail button {
+  width: 51px;
+  height: 56px;
+  color: #c0d0d0;
+  font-size: 11px;
+}
+.rail i {
+  display: block;
+  font:
+    24px/27px "Segoe UI Symbol",
+    sans-serif;
+}
+.rail .active {
+  color: var(--mint);
+  background: #28473f;
+}
+.maptools {
+  bottom: 152px;
+  left: 18px;
+  display: grid;
+  padding: 3px;
+}
+.maptools button {
+  width: 32px;
+  height: 31px;
+  font-size: 20px;
+}
+.maptools button + button {
+  border-top: 1px solid #30484c;
+}
+aside {
+  right: 18px;
+  top: 88px;
+  width: 290px;
+  max-height: calc(100dvh - 218px);
+  overflow: auto;
+  scrollbar-width: thin;
+  transition:
+    opacity 0.18s,
+    transform 0.18s;
+}
+aside.folded {
+  transform: translateX(110%);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+.panel-head {
+  justify-content: space-between;
+  padding: 13px 17px;
+  border-bottom: 1px solid var(--line);
+}
+.close {
+  font-size: 21px;
+  width: 30px;
+  height: 28px;
+  line-height: 1;
+  color: var(--muted);
+}
+.view,
+.pad {
+  padding: 17px;
+}
+.view[hidden] {
+  display: none;
+}
+.view {
+  animation: open 0.16s ease-out;
+}
+.line,
+.subhead {
+  justify-content: space-between;
+  gap: 9px;
+}
+.link {
+  padding: 2px 0;
+  font-size: 12px;
+}
+.link:hover {
+  background: transparent;
+}
+.mono {
+  margin-top: 2px;
+}
+.elevation {
+  margin-top: 17px;
+  padding: 13px;
+  border: 1px solid #36574e;
+  border-radius: 8px;
+  background: linear-gradient(110deg, #22423b, #173431);
+}
+.elevation strong {
+  font:
+    500 34px/1.3 Consolas,
+    monospace;
+  color: #c8f5d7;
+}
+.label {
+  font-size: 11px;
+  border: 1px solid var(--line);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #c4d2cd;
+}
+.label.on {
+  color: var(--mint);
+  border-color: #4e8060;
+}
+.pair,
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.pair {
+  padding: 13px 0;
+}
+.pair small,
+.pair b {
+  display: block;
+}
+.pair b {
+  font:
+    600 17px Consolas,
+    monospace;
+}
+.subhead {
+  border-top: 1px solid var(--line);
+  padding-top: 13px;
+  margin: 6px 0;
+}
+.pass,
+.station,
+.source,
+.row {
+  padding: 9px 0;
+  border-bottom: 1px solid #2c4548;
+}
+.pass:last-child,
+.source:last-child {
+  border: 0;
+}
+.pass b,
+.row b {
+  font-size: 13px;
+}
+.pass small,
+.source small,
+.row small,
+.station small {
+  display: block;
+}
+.pass button,
+.station button {
+  padding: 2px 5px;
+  color: var(--mint);
+}
+.pass {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.toggle input {
+  accent-color: var(--mint);
+  width: 18px;
+  height: 18px;
+}
+#window {
+  font-size: 26px;
+  color: var(--mint);
+  line-height: 1.5;
+}
+.view p,
+.pad p {
+  font-size: 13px;
+  color: #bfceca;
+  margin: 6px 0;
+}
+.view > small {
+  display: block;
+  margin-top: 7px;
+}
+.view dl {
+  margin: 12px 0;
+}
+.view dl div {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 8px;
+  font-size: 12px;
+  margin: 5px 0;
+}
+dt {
+  color: var(--muted);
+}
+dd {
+  margin: 0;
+}
+ol {
+  list-style: none;
+  padding: 0;
+}
+li {
+  padding: 7px 0 7px 14px;
+  border-left: 1px solid #4b7766;
+}
+li small {
+  display: block;
+}
+li a {
+  color: var(--ink);
+  font-size: 13px;
+}
+.bottom {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 22px;
+  pointer-events: none;
+}
+.timeline,
+.telemetry {
+  position: relative;
+  pointer-events: auto;
+}
+.timeline {
+  padding: 9px 16px;
+  max-width: 760px;
+  margin: auto;
+  background: #10282df2;
+}
+.timeline b {
+  font-size: 13px;
+}
+.timeline time {
+  margin-right: auto;
+  color: #c1d2d1;
+  font-size: 12px;
+}
+.timeline small {
+  font-size: 11px;
+}
+.timeline input {
+  width: 100%;
+  height: 4px;
+  display: block;
+  margin: 11px 0;
+  accent-color: var(--mint);
+  cursor: pointer;
+}
+.telemetry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  max-width: 100%;
+  padding: 7px 12px;
+  margin: 0 auto 6px;
+  background: #0e242bec;
+}
+.telemetry span {
+  font-size: 12px;
+}
+.craft {
+  gap: 9px;
+}
+.craft b {
+  font-size: 12px;
+}
+.legend {
+  gap: 6px;
+  font-size: 11px;
+}
+.legend i {
+  width: 18px;
+  border-top: 2px solid var(--mint);
+}
+.legend i:nth-child(2) {
+  border-top: 2px dashed #e6bb77;
+  margin-left: 6px;
+}
+.spacecraft {
+  display: inline-block;
+  position: relative;
+  width: 22px;
+  height: 9px;
+  background: repeating-linear-gradient(90deg, #96cdaf 0 4px, #376148 4px 5px);
+  transform: rotate(-25deg);
+  border: 1px solid #bce9ba;
+}
+.spacecraft:after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: -4px;
+  width: 4px;
+  height: 14px;
+  background: #f4f0d5;
+  border-radius: 2px;
+}
+.sat-icon {
+  display: grid;
+  place-items: center;
+}
+.sat-icon .spacecraft {
+  transform: rotate(-28deg) scale(1.35);
+  filter: drop-shadow(0 0 5px #77f6ad);
+}
+.dot {
+  background: #f4c57e;
+  border: 2px solid #0c262a;
+  border-radius: 100%;
+  box-shadow: 0 0 0 1px #e3b46b;
+}
+.dot.station-dot {
+  background: #80b7b5;
+  box-shadow: 0 0 0 1px #819b9d;
+}
+.map-label {
+  color: #839f9f;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.leaflet-tooltip {
+  background: #10272de8;
+  color: #e2efe4;
+  border: 1px solid #567469;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font: 12px/1.5 inherit;
+  box-shadow: none;
+}
+.leaflet-tooltip:before {
+  display: none;
+}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #183338;
+  color: #e7f2ed;
+}
+.leaflet-popup-content {
+  font: 13px/1.5 inherit;
+}
+.leaflet-popup-content small {
+  display: block;
+}
+dialog {
+  background: #142d32;
+  color: var(--ink);
+  border: 1px solid #416063;
+  border-radius: 12px;
+  width: min(440px, 93vw);
+  padding: 0;
+  max-height: 82dvh;
+}
+dialog::backdrop {
+  background: #031014aa;
+}
+dialog[open] {
+  animation: open 0.2s ease-out;
+}
+dialog label {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+dialog input {
+  display: block;
+  margin-top: 4px;
+  background: #0d2227;
+  border: 1px solid #456367;
+  border-radius: 5px;
+  width: 100%;
+  padding: 9px;
+  color: var(--ink);
+  font: 14px inherit;
+}
+.primary {
+  background: var(--mint);
+  color: #16362a;
+  padding: 8px 14px;
+  font-weight: bold;
+}
+.primary:hover {
+  background: #c9f3cf;
+}
+#status:not(:empty) {
+  position: absolute;
+  top: 79px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: #243c37;
+  border: 1px solid #607852;
+  border-radius: 6px;
+  font-size: 12px;
+  z-index: 5;
+}
+@keyframes open {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 700px) {
+  header {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    height: 47px;
+    gap: 9px;
+    padding: 0 10px;
+  }
+  h1 {
+    font-size: 16px;
+  }
+  .orbit-logo {
+    width: 19px;
+    height: 19px;
+  }
+  .brand {
+    gap: 10px;
+  }
+  .clock {
+    display: block;
+    text-align: right;
+    line-height: 1.1;
+  }
+  .clock time {
+    font-size: 14px;
+  }
+  .clock small {
+    display: block;
+  }
+  .rail {
+    top: 65px;
+    left: 8px;
+  }
+  .rail button {
+    height: 43px;
+    width: 36px;
+  }
+  .rail i {
+    font-size: 18px;
+    line-height: 21px;
+  }
+  aside {
+    right: 8px;
+    top: 65px;
+    width: min(262px, calc(100vw - 75px));
+    max-height: calc(100dvh - 220px);
+  }
+  .bottom {
+    left: 8px;
+    right: 8px;
+    bottom: 22px;
+  }
+  .telemetry {
+    gap: 7px;
+    padding: 5px 7px;
+  }
+  .telemetry span {
+    font-size: 11px;
+  }
+  .maptools {
+    left: 8px;
+    bottom: 145px;
+  }
+  .timeline {
+    padding: 7px 9px;
+  }
+  .legend {
+    gap: 3px;
+  }
+  .timeline time {
+    font-size: 11px;
+  }
+  .view,
+  .pad {
+    padding: 13px;
+  }
+  .panel-head {
+    padding: 8px 12px;
+  }
+  .head-divider {
+    display: none;
+  }
+}
+@media (max-height: 550px) {
+  aside {
+    max-height: calc(100dvh - 85px);
+  }
+  .maptools {
+    left: 90px;
+    bottom: 112px;
+  }
+  .rail button {
+    height: 38px;
+  }
+  .rail i {
+    font-size: 17px;
+    line-height: 18px;
+  }
+  .timeline {
+    max-width: 55vw;
+    margin-left: 0;
+  }
+  .telemetry {
+    margin-left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

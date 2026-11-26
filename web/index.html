@@ -1,21 +1,212 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0c2229"><title>天宫任务地图</title><link rel="icon" href="data:,"><link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="themes.css"></head>
-<body><main>
-<div id="map" aria-label="天宫轨道与地面观测地图"></div>
-<header><div class="brand"><i class="orbit-logo"></i><h1>天宫任务地图</h1></div><span class="head-divider"></span><span id="mode">实时推算</span><div class="spacer"></div><div class="base-switch"><button data-base="vector">矢量</button><button data-base="satellite">卫星</button></div><div class="clock"><time id="clock">--:--:--</time><small>北京时间</small></div><button id="refresh" title="刷新数据" aria-label="刷新数据">↻</button></header>
-<nav class="rail" aria-label="地图面板"><button data-view="observer" class="active"><i>⌖</i>观测</button><button data-view="mission"><i>◴</i>任务</button><button data-view="layers"><i>▱</i>图层</button><button data-view="sources"><i>≡</i>来源</button></nav>
-<div class="maptools"><button id="zoomIn" aria-label="放大">+</button><button id="zoomOut" aria-label="缩小">−</button><button id="locate" aria-label="定位空间站" title="定位空间站">⌖</button><button id="fit" aria-label="全球视图" title="全球视图">◎</button></div>
-<aside id="drawer"><div class="panel-head"><h2 id="drawerTitle">固定观测点</h2><button id="hideDrawer" class="close" aria-label="收起面板">×</button></div>
-<section id="observer" class="view"><div class="line"><h3 id="siteName">—</h3><button id="edit" class="link">编辑位置</button></div><div id="coords" class="mono muted"></div>
-<div class="elevation"><small>相对仰角</small><div class="line"><strong id="el">—</strong><span id="visible" class="label">—</span></div></div>
-<div class="pair"><div><small>方位角</small><b id="az">—</b></div><div><small>斜距</small><b id="range">—</b></div></div>
-<div class="subhead"><h3>预计过境</h3><button id="allPass" class="link">全部 ↗</button></div><div id="passList"></div><small id="mask"></small></section>
-<section id="mission" class="view" hidden><div class="line"><h3>神舟二十三号</h3><span id="returnStage" class="label"></span></div><small>返回日期 · 北京时间</small><h4 id="window">—</h4><p id="basis"></p><button id="historyBtn" class="link">历史样本 ↗</button><dl id="crew"></dl><div class="subhead"><h3>任务进展</h3><button id="newsBtn" class="link">官方动态 ↗</button></div><ol id="events"></ol></section>
-<section id="layers" class="view" hidden><label class="toggle"><b>瓦片源</b><select id="provider"><option value="gaode">高德地图</option><option value="bing">Bing 地图</option></select></label><label class="toggle" id="labelOption"><b>影像标注</b><input type="checkbox" id="satLabels" checked></label><label class="toggle"><b>地面轨迹</b><input type="checkbox" id="trackOn" checked></label><label class="toggle"><b>固定观测点</b><input type="checkbox" id="siteOn" checked></label><label class="toggle"><b>地面站与通信</b><input type="checkbox" id="stationsOn" checked></label><div id="stations"></div><small>站点以所在地区中心示意</small><div id="contacts"></div><label class="toggle"><b>航行通告</b><input type="checkbox" id="noticesOn" checked></label><div class="line"><span id="noticeCount"></span><button id="noticesBtn" class="link">查看通告 ↗</button></div><small id="noticeHint"></small></section>
-<section id="sources" class="view" hidden><div id="sourceList"></div><small id="syncStamp"></small></section></aside>
-<div class="bottom"><div class="telemetry"><div class="craft"><i class="spacecraft"></i><b>天宫空间站</b></div><span id="lat">—</span><span id="lon">—</span><span id="height">—</span></div>
-<div class="timeline"><div class="line"><b>轨道时间轴</b><time id="selected">—</time><button id="nowBtn" class="link">回到现在</button></div><input id="timeline" type="range" step="60000" aria-label="轨道预览时间"><div class="line muted"><small id="begin">—</small><div class="legend"><i></i>过去轨迹 <i></i>预计轨迹</div><small id="end">—</small></div></div></div>
-<div id="status" role="status" aria-live="polite"></div></main>
-<dialog id="editor"><form id="siteForm"><div class="panel-head"><h2>编辑固定观测点</h2><button type="button" class="close" aria-label="关闭">×</button></div><div class="pad"><label>名称<input name="name" maxlength="32" required></label><div class="fields"><label>纬度（°）<input name="lat" type="number" min="-90" max="90" step="any" required></label><label>经度（°）<input name="lon" type="number" min="-180" max="180" step="any" required></label></div><div class="fields"><label>海拔（米）<input name="alt" type="number" min="-500" max="10000" step="any" required></label><label>最低仰角（°）<input name="mask" type="number" min="0" max="89" step="any" required></label></div><button class="primary" type="submit">保存观测点</button></div></form></dialog>
-<dialog id="details"><div class="panel-head"><h2 id="detailTitle"></h2><button class="close" aria-label="关闭">×</button></div><div class="pad" id="detailBody"></div></dialog>
-<script src="vendor/leaflet.js"></script><script type="module" src="app.js"></script></body></html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0c2229" />
+    <title>天宫任务地图</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="vendor/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="themes.css" />
+  </head>
+  <body>
+    <main>
+      <div id="map" aria-label="天宫轨道与地面观测地图"></div>
+      <header>
+        <div class="brand">
+          <i class="orbit-logo"></i>
+          <h1>天宫任务地图</h1>
+        </div>
+        <span class="head-divider"></span><span id="mode">实时推算</span>
+        <div class="spacer"></div>
+        <div class="base-switch">
+          <button data-base="vector">矢量</button
+          ><button data-base="satellite">卫星</button>
+        </div>
+        <div class="clock">
+          <time id="clock">--:--:--</time><small>北京时间</small>
+        </div>
+        <button id="refresh" title="刷新数据" aria-label="刷新数据">↻</button>
+      </header>
+      <nav class="rail" aria-label="地图面板">
+        <button data-view="observer" class="active"><i>⌖</i>观测</button
+        ><button data-view="mission"><i>◴</i>任务</button
+        ><button data-view="layers"><i>▱</i>图层</button
+        ><button data-view="sources"><i>≡</i>来源</button>
+      </nav>
+      <div class="maptools">
+        <button id="zoomIn" aria-label="放大">+</button
+        ><button id="zoomOut" aria-label="缩小">−</button
+        ><button id="locate" aria-label="定位空间站" title="定位空间站">
+          ⌖</button
+        ><button id="fit" aria-label="全球视图" title="全球视图">◎</button>
+      </div>
+      <aside id="drawer">
+        <div class="panel-head">
+          <h2 id="drawerTitle">固定观测点</h2>
+          <button id="hideDrawer" class="close" aria-label="收起面板">×</button>
+        </div>
+        <section id="observer" class="view">
+          <div class="line">
+            <h3 id="siteName">—</h3>
+            <button id="edit" class="link">编辑位置</button>
+          </div>
+          <div id="coords" class="mono muted"></div>
+          <div class="elevation">
+            <small>相对仰角</small>
+            <div class="line">
+              <strong id="el">—</strong
+              ><span id="visible" class="label">—</span>
+            </div>
+          </div>
+          <div class="pair">
+            <div><small>方位角</small><b id="az">—</b></div>
+            <div><small>斜距</small><b id="range">—</b></div>
+          </div>
+          <div class="subhead">
+            <h3>预计过境</h3>
+            <button id="allPass" class="link">全部 ↗</button>
+          </div>
+          <div id="passList"></div>
+          <small id="mask"></small>
+        </section>
+        <section id="mission" class="view" hidden>
+          <div class="line">
+            <h3>神舟二十三号</h3>
+            <span id="returnStage" class="label"></span>
+          </div>
+          <small>返回日期 · 北京时间</small>
+          <h4 id="window">—</h4>
+          <p id="basis"></p>
+          <button id="historyBtn" class="link">历史样本 ↗</button>
+          <dl id="crew"></dl>
+          <div class="subhead">
+            <h3>任务进展</h3>
+            <button id="newsBtn" class="link">官方动态 ↗</button>
+          </div>
+          <ol id="events"></ol>
+        </section>
+        <section id="layers" class="view" hidden>
+          <label class="toggle"
+            ><b>瓦片源</b
+            ><select id="provider">
+              <option value="gaode">高德地图</option>
+              <option value="bing">Bing 地图</option>
+            </select></label
+          ><label class="toggle" id="labelOption"
+            ><b>影像标注</b
+            ><input type="checkbox" id="satLabels" checked /></label
+          ><label class="toggle"
+            ><b>地面轨迹</b
+            ><input type="checkbox" id="trackOn" checked /></label
+          ><label class="toggle"
+            ><b>固定观测点</b
+            ><input type="checkbox" id="siteOn" checked /></label
+          ><label class="toggle"
+            ><b>地面站与通信</b><input type="checkbox" id="stationsOn" checked
+          /></label>
+          <div id="stations"></div>
+          <small>遥感地面站 · 以所在地区中心示意</small>
+          <div id="contacts"></div>
+          <label class="toggle"
+            ><b>航行通告</b><input type="checkbox" id="noticesOn" checked
+          /></label>
+          <div class="line">
+            <span id="noticeCount"></span
+            ><button id="noticesBtn" class="link">查看通告 ↗</button>
+          </div>
+          <small id="noticeHint"></small>
+        </section>
+        <section id="sources" class="view" hidden>
+          <div id="sourceList"></div>
+          <small id="syncStamp"></small>
+        </section>
+      </aside>
+      <div class="bottom">
+        <div class="telemetry">
+          <div class="craft"><i class="spacecraft"></i><b>天宫空间站</b></div>
+          <span id="lat">—</span><span id="lon">—</span
+          ><span id="height">—</span>
+        </div>
+        <div class="timeline">
+          <div class="line">
+            <b>轨道时间轴</b><time id="selected">—</time
+            ><button id="nowBtn" class="link">回到现在</button>
+          </div>
+          <input
+            id="timeline"
+            type="range"
+            step="60000"
+            aria-label="轨道预览时间"
+          />
+          <div class="line muted">
+            <small id="begin">—</small>
+            <div class="legend"><i></i>过去轨迹 <i></i>预计轨迹</div>
+            <small id="end">—</small>
+          </div>
+        </div>
+      </div>
+      <div id="status" role="status" aria-live="polite"></div>
+    </main>
+    <dialog id="editor">
+      <form id="siteForm">
+        <div class="panel-head">
+          <h2>编辑固定观测点</h2>
+          <button type="button" class="close" aria-label="关闭">×</button>
+        </div>
+        <div class="pad">
+          <label>名称<input name="name" maxlength="32" required /></label>
+          <div class="fields">
+            <label
+              >纬度（°）<input
+                name="lat"
+                type="number"
+                min="-90"
+                max="90"
+                step="any"
+                required /></label
+            ><label
+              >经度（°）<input
+                name="lon"
+                type="number"
+                min="-180"
+                max="180"
+                step="any"
+                required
+            /></label>
+          </div>
+          <div class="fields">
+            <label
+              >海拔（米）<input
+                name="alt"
+                type="number"
+                min="-500"
+                max="10000"
+                step="any"
+                required /></label
+            ><label
+              >最低仰角（°）<input
+                name="mask"
+                type="number"
+                min="0"
+                max="89"
+                step="any"
+                required
+            /></label>
+          </div>
+          <button class="primary" type="submit">保存观测点</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="details">
+      <div class="panel-head">
+        <h2 id="detailTitle"></h2>
+        <button class="close" aria-label="关闭">×</button>
+      </div>
+      <div class="pad" id="detailBody"></div>
+    </dialog>
+    <script src="vendor/leaflet.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
