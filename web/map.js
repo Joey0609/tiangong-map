@@ -1,3 +1,4 @@
+import { areaCenter } from './area-center.js';
 import { noticeId, returnLabel, bindNotice } from "./advisories.js";
 import { basemap } from "./basemap.js";
 import { position, geodetic, observer } from "./orbit.js";
@@ -272,7 +273,7 @@ export function createMap() {
     if (!$("noticesOn").checked) hidden.clear();
     const nkey = JSON.stringify([
       version,
-      notices.map((n) => [n.id, n.code]),
+      notices.map((n) => [n.id, n.code, t < n.period[0]]),
       $("noticesOn").checked,
       Math.round(center / 90),
     ]);
@@ -285,6 +286,8 @@ export function createMap() {
           const id = noticeId(n), label = returnLabel(n);
           if (hidden.has(id)) continue;
           const opts = label ? { color: "#b34570", weight: 2, fillOpacity: 0.23, dashArray: "6 3" } : { color: "#d9ac72", weight: 1.2, fillOpacity: 0.14 };
+          const pending = t < n.period[0];
+          if (pending) Object.assign(opts, { dashArray:'3 6', fillOpacity:0.08 });
           let l;
           if (n.circle) {
             const [[y, x], r] = n.circle;
@@ -300,6 +303,13 @@ export function createMap() {
             l.addTo(areas);
             noticeLayers.set(id, l);
             if (label) l.bindTooltip(esc(label) + ' · ' + esc(n.code), { permanent:true, direction:'center', className:'return-label' });
+            const c = areaCenter(n);
+            if (c) {
+              const ref = L.circleMarker([c[0], near(c[1], center)], { radius:4, weight:2, color:'#fff', fillColor:'#763d81', fillOpacity:1, interactive:false });
+              l.on('popupopen', () => ref.addTo(map));
+              l.on('popupclose remove', () => ref.remove());
+            }
+            if (!label) l.bindTooltip(esc(n.code) + (pending ? ' · 待生效' : ' · 公告窗口内'));
             bindNotice(l, n, () => { hidden.add(id); areas.removeLayer(l); noticeLayers.delete(id); });
           }
         }

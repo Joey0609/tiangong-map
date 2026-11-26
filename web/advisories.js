@@ -1,3 +1,4 @@
+import { areaCenter } from './area-center.js';
 import { date, esc, icon, toast } from './ui.js';
 
 export const noticeId = n => `${n.source}:${n.id}:${n.code}`;
@@ -19,10 +20,12 @@ export function bindNotice(layer, n, hide) {
   const fir = text.match(/(?:^|\n)A\)\s*([A-Z]{4})\b/)?.[1] || '—';
   const detail = text.match(/(?:^|\n)E\)\s*([\s\S]*?)(?=\n\s*[FG]\)|\nCREATED:|$)/)?.[1]?.trim() || text;
   const type = n.source || 'NOTAM';
+  const center = areaCenter(n);
+  const centerRow = center ? `<small>航警区域几何中心</small>${coordinateText({points:[center]})}` : '';
   layer.bindPopup(() => {
     const box = document.createElement('section'); box.className = 'advisory';
     const period = n.period?.length === 2 && n.period.every(Number.isFinite) ? n.period.map(v => date(v, {year:'numeric', month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})).join(' – ') + ' 北京时间 (UTC+8)' : n.time;
-    box.innerHTML = `<div class="advisory-head"><b>${esc(type)} 信息</b>${button('raw','查看航警原文','file-text')}${button('hide','隐藏航警','eye-off')}${button('pin','固定弹窗','pin')}${button('copy','复制原始报文','copy')}${button('close','关闭','x')}</div><div class="advisory-body"><div data-structured>${label ? `<strong>${esc(label)}</strong>` : ''}<small>持续时间</small>${esc(period)}<div class="advisory-cols"><div><small>航警编号</small>${esc(n.code)}</div><div><small>飞行情报区</small>${esc(fir)}</div></div><small>航警详情</small><pre>${esc(detail)}</pre>${coord ? `<details><summary>边界坐标</summary><pre>${esc(coord)}</pre></details>` : ''}</div><pre data-original hidden>${esc(text)}</pre></div>`;
+    box.innerHTML = `<div class="advisory-head"><b>${esc(type)} 信息</b>${button('raw','查看航警原文','file-text')}${button('hide','隐藏航警','eye-off')}${button('pin','固定弹窗','pin')}${button('copy','复制原始报文','copy')}${button('close','关闭','x')}</div><div class="advisory-body"><div data-structured>${label ? `<strong>${esc(label)}</strong>` : ''}<small>持续时间</small>${esc(period)}<div class="advisory-cols"><div><small>航警编号</small>${esc(n.code)}</div><div><small>飞行情报区</small>${esc(fir)}</div></div><small>航警详情</small><pre>${esc(detail)}</pre>${centerRow}${coord ? `<details><summary>边界坐标</summary><pre>${esc(coord)}</pre></details>` : ''}</div><pre data-original hidden>${esc(text)}</pre></div>`;
     const popup = layer.getPopup();
     box.onclick = async e => {
       const b = e.target.closest('button'); if (!b) return;
