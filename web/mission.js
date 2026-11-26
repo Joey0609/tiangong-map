@@ -1,5 +1,6 @@
 import { $, esc, anchor, date, dialog } from "./ui.js";
 
+import { landingRange, durationMinutes } from './return-timing.js';
 import { DAY, observer } from "./orbit.js";
 
 function row(title, detail = "") {
@@ -46,6 +47,7 @@ export function createMission(go, focusNotice) {
     const earliest = dayNumber(mission.arrival) + Math.min(...d) * DAY,
       latest = dayNumber(mission.arrival) + Math.max(...d) * DAY;
     const official = mission.officialReturn;
+    const estimate = landingRange(mission.confirmedSeparation, mission.returnFlights || [], t);
     const scheduled = (snapshot.news.data?.items || []).find(
       (n) =>
         dayNumber(n.date) <= t &&
@@ -64,6 +66,9 @@ export function createMission(go, focusNotice) {
     } else if (scheduled) {
       window = (scheduled.title.match(/\d+月\d+日/) || ["待公布"])[0];
       basis = anchor(scheduled.url, "官方任务公告");
+    } else if (estimate) {
+      window = date(estimate.from) + " – " + date(estimate.to);
+      basis = anchor(mission.confirmedSeparation.url, "已公布撤离时刻") + " · 按 " + estimate.count + " 次历史飞行时长类比";
     } else if (phase === "返回准备" && d.length && t < latest + DAY) {
       window = dayLabel(earliest) + " – " + dayLabel(latest);
       basis =
@@ -118,7 +123,7 @@ export function createMission(go, focusNotice) {
                   anchor(h.landingSource, h.landing + " 着陆"),
               ),
             )
-            .join(""),
+            .join("") + '<h3>撤离至着陆</h3>' + (mission.returnFlights || []).map(f => row(esc(f.name) + ' · ' + durationMinutes(f) + ' 分钟', anchor(f.separationSource, date(f.separation) + ' 撤离') + ' → ' + anchor(f.touchdownSource, date(f.touchdown) + ' 着陆'))).join(''),
       );
     $("newsBtn").onclick = () =>
       dialog(
