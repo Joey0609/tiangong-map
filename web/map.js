@@ -16,7 +16,7 @@ export function createMap() {
     preferCanvas: true,
   });
   map.attributionControl.setPrefix(false);
-  map.attributionControl.addAttribution("Natural Earth · Leaflet");
+  map.attributionControl.addAttribution('Natural Earth · Leaflet · 城市代标 © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>');
   map.createPane("fallback");
   map.getPane("fallback").style.zIndex = 180;
   map.getPane("fallback").style.pointerEvents = "none";
@@ -240,6 +240,10 @@ export function createMap() {
           if (located) dot(s.lat, s.lon, s.name, true).bindPopup(
             esc(s.name),
           );
+          else if (s.cityReference) {
+            const c = s.cityReference, title = s.name + " · 市政府代标";
+            dot(c.lat, c.lon, title, false).bindPopup(esc(title) + "<br>" + esc(c.name));
+          }
     }
     connect.clearLayers();
     function line(s, color, dash) {

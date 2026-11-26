@@ -207,10 +207,10 @@ export function createMission(go, focusNotice) {
         .map(
           ({ s, located, isUp, confirmed }) =>
             '<div class="station line"><div><b>' + esc(s.name) + '</b><small>' +
-            anchor(s.source, s.episode) + '</small><small>' +
-            (located ? (p ? (isUp ? "几何可见" : "低于仰角门限") : "无星历") : "站址未核实") +
+            (s.source ? anchor(s.source, s.episode) : esc(s.episode)) + '</small><small>' +
+            (located ? (p ? (isUp ? "几何可见" : "低于仰角门限") : "无星历") : s.cityReference ? anchor(s.cityReference.source, s.cityReference.name + " · 城市代标") : "站址未核实") +
             (confirmed ? " · " + anchor(confirmed.url, "通信已报告") : "") + '</small></div>' +
-            (located ? '<button data-station="' + esc(s.id) + '">定位</button>' : '') + '</div>',
+            ((located || s.cityReference) ? '<button data-station="' + esc(s.id) + '">定位</button>' : '') + '</div>',
         )
         .join("");
       $("stations")
@@ -221,7 +221,8 @@ export function createMission(go, focusNotice) {
               const s = mission.stations.find(
                 (s) => s.id === b.dataset.station,
               );
-              go(s.lat, s.lon);
+              const target = Number.isFinite(s.lat) && s.coordinateSource ? s : s.cityReference;
+              if (target) go(target.lat, target.lon);
             }),
         );
     }
