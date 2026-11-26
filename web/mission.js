@@ -1,4 +1,5 @@
 import { $, esc, anchor, date, dialog } from "./ui.js";
+import { noticeId, returnLabel } from "./advisories.js";
 import { DAY, observer } from "./orbit.js";
 
 function row(title, detail = "") {
@@ -12,11 +13,12 @@ function row(title, detail = "") {
 const dayNumber = (v) => Date.parse(v + "T00:00:00+08:00");
 const dayLabel = (v) => date(v, { month: "numeric", day: "numeric" });
 
-export function createMission(go) {
+export function createMission(go, focusNotice) {
   let snapshot,
     mission,
     visibleNotices = [],
     lastMission = "",
+    returnKey = "",
     lastFeed = null;
   function returnState(t) {
     const headlines = (snapshot.news.data?.items || []).filter(
@@ -59,10 +61,10 @@ export function createMission(go) {
       basis = "官方任务动态已更新";
     } else if (official && Date.parse(official.published) <= t) {
       window = official.label;
-      basis = anchor(official.url, "官方返回安排 ↗");
+      basis = anchor(official.url, "官方返回安排");
     } else if (scheduled) {
       window = (scheduled.title.match(/\d+月\d+日/) || ["待公布"])[0];
-      basis = anchor(scheduled.url, "官方任务公告 ↗");
+      basis = anchor(scheduled.url, "官方任务公告");
     } else if (phase === "返回准备" && d.length && t < latest + DAY) {
       window = dayLabel(earliest) + " – " + dayLabel(latest);
       basis =
@@ -99,6 +101,7 @@ export function createMission(go) {
     mission = curated;
     lastMission = "";
     lastFeed = null;
+    returnKey = "";
     $("historyBtn").onclick = () =>
       dialog(
         "返回日期 · 历史样本",
@@ -150,13 +153,9 @@ export function createMission(go) {
             info +=
               "<br>覆盖 " + date(orbit[0][0]) + " 至 " + date(orbit.at(-1)[0]);
           if (entry.error) info += "<br>更新失败 · " + esc(entry.error);
-          return row(anchor(url, title + " ↗"), info);
+          return row(anchor(url, title), info);
         })
-        .join("") +
-      row(
-        anchor(mission.stations[0].source, "公开地面站资料 ↗"),
-        "地区示意 · 本次链路以公开通报为准",
-      );
+        .join("");
     $("syncStamp").textContent = "快照 " + date(snapshot.updated);
   }
   function render(t, p) {
@@ -178,14 +177,25 @@ export function createMission(go) {
     $("noticeHint").textContent =
       "按选定时间筛选 · 任务关联待核实" +
       (partial?.length ? " · 缺源 " + partial.join(", ").toUpperCase() : "");
+    // Show published return windows in advance, without calling them active.
+    const returns = items.filter(n => n.period?.length === 2 && n.period.every(Number.isFinite) && t < n.period[1] && returnLabel(n));
+    const entries = returns.map(n => [noticeId(n), t < n.period[0] ? "待开始" : "公告窗口内"]);
+    const rk = JSON.stringify(entries);
+    if (returnKey !== rk) {
+      returnKey = rk;
+      $("returnNotices").innerHTML = returns.length ? "<h3>返回航警</h3>" + returns.map((n,i) =>
+        '<div class="station line"><div><b>' + esc(n.code) + '</b><small>' + esc(returnLabel(n)) + ' · ' + entries[i][1] +
+        '</small></div><button data-return="' + i + '"' + (n.circle || n.points?.length >= 3 ? '' : ' disabled') + '>查看区域</button></div>').join('') : '';
+      $("returnNotices").querySelectorAll('button').forEach(b => { b.onclick = () => focusNotice(returns[Number(b.dataset.return)]); });
+    }
     const contacts = mission.contacts.filter(
       (c) => Date.parse(c.start) <= t && t < Date.parse(c.end) && c.url,
     );
-    const states = mission.stations.map((s) => ({
-      s,
-      isUp: p && observer(s)(p).el >= 0,
-      confirmed: contacts.find((c) => c.station === s.id),
-    }));
+    const states = mission.stations.map(s => {
+      const located = Boolean(s.coordinateSource) && Number.isFinite(s.lat) && Math.abs(s.lat) <= 90 && Number.isFinite(s.lon) && Math.abs(s.lon) <= 180;
+      return { s, located, isUp: Boolean(located && p && observer(s)(p).el >= (s.mask ?? 0)),
+        confirmed: contacts.find(c => c.station === s.id) };
+    });
     const feedKey = JSON.stringify([
       p !== null,
       states.map((x) => [x.isUp, x.confirmed]),
@@ -195,16 +205,12 @@ export function createMission(go) {
       lastFeed = feedKey;
       $("stations").innerHTML = states
         .map(
-          ({ s, isUp, confirmed }) =>
-            '<div class="station line"><div><b>' +
-            esc(s.name) +
-            "</b><small>" +
-            (p ? (isUp ? "地平线以上" : "地平线以下") : "无星历") +
-            " · " +
-            (confirmed ? anchor(confirmed.url, "通信已报告") : "通信未获通报") +
-            '</small></div><button data-station="' +
-            esc(s.id) +
-            '">定位</button></div>',
+          ({ s, located, isUp, confirmed }) =>
+            '<div class="station line"><div><b>' + esc(s.name) + '</b><small>' +
+            anchor(s.source, s.episode) + '</small><small>' +
+            (located ? (p ? (isUp ? "几何可见" : "低于仰角门限") : "无星历") : "站址未核实") +
+            (confirmed ? " · " + anchor(confirmed.url, "通信已报告") : "") + '</small></div>' +
+            (located ? '<button data-station="' + esc(s.id) + '">定位</button>' : '') + '</div>',
         )
         .join("");
       $("stations")
@@ -219,7 +225,7 @@ export function createMission(go) {
             }),
         );
     }
-    return { notices: visibleNotices, activeContacts: contacts };
+    return { notices: [...new Map([...visibleNotices, ...returns].map(n => [noticeId(n), n])).values()], stationStates: states };
   }
   return { set, render };
 }

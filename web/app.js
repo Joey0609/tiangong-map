@@ -6,7 +6,7 @@ import { $, angle, date, navigation, toast } from "./ui.js";
 
 navigation();
 const map = createMap(),
-  missions = createMission(map.go);
+  missions = createMission(map.go, (n) => map.focusNotice(n, tick));
 let snapshot,
   mission,
   rows = [],
@@ -16,7 +16,7 @@ let snapshot,
 const observation = createObservation(selectTime, () => {
   tick();
   map.go(observation.site.lat, observation.site.lon);
-});
+}, map.pick);
 function selectTime(t) {
   pinned = t;
   tick();

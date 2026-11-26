@@ -17,7 +17,7 @@ function valid(s) {
     )
   );
 }
-export function createObservation(preview, onChange) {
+export function createObservation(preview, onChange, pick) {
   let site = fallback,
     list = [],
     cached = "",
@@ -30,6 +30,17 @@ export function createObservation(preview, onChange) {
   $("edit").onclick = () => {
     for (const [k, v] of Object.entries(site)) form.elements[k].value = v;
     $("editor").showModal();
+  };
+  $("pickSite").onclick = () => {
+    $("editor").close();
+    pick(point => {
+      if (point) {
+        form.elements.lat.value = point.lat.toFixed(5);
+        form.elements.lon.value = point.lng.toFixed(5);
+        if (form.elements.name.value === site.name) form.elements.name.value = "地图观测点";
+      }
+      $("editor").showModal();
+    });
   };
   form.onsubmit = (e) => {
     e.preventDefault();

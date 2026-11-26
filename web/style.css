@@ -133,31 +133,7 @@ header {
 .brand {
   gap: 14px;
 }
-.orbit-logo {
-  height: 26px;
-  width: 26px;
-  border: 2px solid #a9e8bd;
-  border-radius: 50%;
-  transform: rotate(-32deg);
-  position: relative;
-}
-.orbit-logo:before {
-  content: "";
-  position: absolute;
-  inset: 7px -8px;
-  border: 1.5px solid var(--mint);
-  border-radius: 50%;
-}
-.orbit-logo:after {
-  content: "";
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 100%;
-  background: #fff;
-  top: 5px;
-  left: 25px;
-}
+
 .head-divider {
   height: 18px;
   border-left: 1px solid var(--line);
@@ -216,7 +192,7 @@ time,
   color: #c0d0d0;
   font-size: 11px;
 }
-.rail i {
+.rail .icon {
   display: block;
   font:
     24px/27px "Segoe UI Symbol",
@@ -497,43 +473,12 @@ li a {
   border-top: 2px dashed #e6bb77;
   margin-left: 6px;
 }
-.spacecraft {
-  display: inline-block;
-  position: relative;
-  width: 22px;
-  height: 9px;
-  background: repeating-linear-gradient(90deg, #96cdaf 0 4px, #376148 4px 5px);
-  transform: rotate(-25deg);
-  border: 1px solid #bce9ba;
-}
-.spacecraft:after {
-  content: "";
-  position: absolute;
-  left: 8px;
-  top: -4px;
-  width: 4px;
-  height: 14px;
-  background: #f4f0d5;
-  border-radius: 2px;
-}
+
 .sat-icon {
   display: grid;
   place-items: center;
 }
-.sat-icon .spacecraft {
-  transform: rotate(-28deg) scale(1.35);
-  filter: drop-shadow(0 0 5px #77f6ad);
-}
-.dot {
-  background: #f4c57e;
-  border: 2px solid #0c262a;
-  border-radius: 100%;
-  box-shadow: 0 0 0 1px #e3b46b;
-}
-.dot.station-dot {
-  background: #80b7b5;
-  box-shadow: 0 0 0 1px #819b9d;
-}
+
 .map-label {
   color: #839f9f;
   font-size: 12px;
@@ -640,10 +585,7 @@ dialog input {
   h1 {
     font-size: 16px;
   }
-  .orbit-logo {
-    width: 19px;
-    height: 19px;
-  }
+
   .brand {
     gap: 10px;
   }
@@ -666,7 +608,7 @@ dialog input {
     height: 43px;
     width: 36px;
   }
-  .rail i {
+  .rail .icon {
     font-size: 18px;
     line-height: 21px;
   }
@@ -723,7 +665,7 @@ dialog input {
   .rail button {
     height: 38px;
   }
-  .rail i {
+  .rail .icon {
     font-size: 17px;
     line-height: 18px;
   }

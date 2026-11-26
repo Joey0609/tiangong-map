@@ -1,17 +1,17 @@
+import { noticeId, returnLabel, bindNotice } from "./advisories.js";
 import { basemap } from "./basemap.js";
 import { position, geodetic, observer } from "./orbit.js";
-import { $, esc, toast } from "./ui.js";
+import { $, esc, toast, icon } from "./ui.js";
 
 export function createMap() {
   const map = L.map("map", {
     zoomControl: false,
-    zoomSnap: 0.1,
-    minZoom: 1,
+    zoomSnap: 1,
+    minZoom: 3,
     maxZoom: 8,
-    maxBounds: [
-      [-82, -360],
-      [82, 360],
-    ],
+    worldCopyJump: true,
+    // Constrain latitude to the drawable Mercator surface; longitude wraps on drag.
+    maxBounds: [[-85.05112878, -1e9], [85.05112878, 1e9]],
     maxBoundsViscosity: 1,
     preferCanvas: true,
   });
@@ -25,12 +25,14 @@ export function createMap() {
     paths = L.layerGroup().addTo(map);
   const pins = L.layerGroup().addTo(map),
     areas = L.layerGroup().addTo(map);
+  const noticeLayers = new Map(), hidden = new Set();
+  let pendingPick = null;
   const connect = L.layerGroup().addTo(map);
   const marker = L.marker([0, 0], {
     icon: L.divIcon({
       className: "sat-icon",
-      html: '<i class="spacecraft"></i>',
-      iconSize: [36, 30],
+      html: icon("satellite"),
+      iconSize: [30, 30],
     }),
     zIndexOffset: 800,
   }).bindTooltip("天宫空间站", {
@@ -49,14 +51,24 @@ export function createMap() {
     noticeKey = "",
     lastOrbit = null,
     initial = true;
-  function world() {
-    const z = Math.max(
-      1.1,
-      Math.min(3.35, Math.log2(map.getSize().x / 256) + 0.05),
-    );
-    map.setView([12, 32], z);
+  function limitZoom() {
+    const { x, y } = map.getSize();
+    map.setMinZoom(Math.min(8, Math.max(3, Math.ceil(Math.log2(Math.max(y, x / 2) / 256)))));
   }
+  function syncZoomControls() {
+    $("zoomOut").disabled = map.getZoom() <= map.getMinZoom();
+    $("zoomIn").disabled = map.getZoom() >= map.getMaxZoom();
+  }
+  function world() { map.setView([12, 32], map.getMinZoom()); }
+  limitZoom();
   world();
+  syncZoomControls();
+  map.on("resize", () => { limitZoom(); syncZoomControls(); });
+  map.on("zoomend", syncZoomControls);
+  map.on("moveend", () => {
+    const center = map.getCenter();
+    if (Math.abs(center.lng) > 180) map.setView(center.wrap(), map.getZoom(), { animate: false });
+  });
   basemap(map, (m) => {
     theme = m;
     pathKey = "";
@@ -127,8 +139,9 @@ export function createMap() {
   function dot(lat, lon, title, station) {
     return L.marker([lat, near(lon, map.getCenter().lng)], {
       icon: L.divIcon({
-        className: "dot " + (station ? "station-dot" : ""),
-        iconSize: station ? [8, 8] : [12, 12],
+        className: "map-pin-icon",
+        html: icon(station ? "radio-tower" : "map-pin"),
+        iconSize: [22, 22],
       }),
     })
       .bindTooltip(esc(title))
@@ -169,7 +182,7 @@ export function createMap() {
     site,
     mission,
     notices,
-    activeContacts,
+    stationStates,
     version,
   }) {
     latest = point;
@@ -223,9 +236,9 @@ export function createMap() {
           esc(site.name) + " · 固定观测点",
         );
       if ($("stationsOn").checked)
-        for (const s of mission.stations)
-          dot(s.lat, s.lon, s.name, true).bindPopup(
-            esc(s.name) + " · 地区示意",
+        for (const { s, located } of stationStates)
+          if (located) dot(s.lat, s.lon, s.name, true).bindPopup(
+            esc(s.name),
           );
     }
     connect.clearLayers();
@@ -237,7 +250,7 @@ export function createMap() {
           [s.lat, slon],
           [point.lat, lng],
         ],
-        { color, weight: 1.5, dashArray: dash, interactive: false },
+        { color, weight: 1, opacity: 0.85, dashArray: dash, interactive: false },
       ).addTo(connect);
     }
     if (
@@ -245,12 +258,14 @@ export function createMap() {
       $("siteOn").checked &&
       observer(site)(position(rows, t)).el >= site.mask
     )
-      line(site, "#b9ddd2", "3 7");
+      line(site, theme === "vector" ? "#226c65" : "#c1f1df", "3 4");
     if ($("stationsOn").checked)
-      for (const c of activeContacts) {
-        const s = mission.stations.find((s) => s.id === c.station);
-        if (s && c.kind === "direct") line(s, "#92e4a1", null);
+      for (const { s, located, isUp, confirmed } of stationStates) {
+        if (!located) continue;
+        if (confirmed?.kind === "direct") line(s, "#399364", null);
+        else if (isUp) line(s, theme === "vector" ? "#226c65" : "#c1f1df", "3 4");
       }
+    if (!$("noticesOn").checked) hidden.clear();
     const nkey = JSON.stringify([
       version,
       notices.map((n) => [n.id, n.code]),
@@ -260,9 +275,12 @@ export function createMap() {
     if (nkey !== noticeKey) {
       noticeKey = nkey;
       areas.clearLayers();
+      noticeLayers.clear();
       if ($("noticesOn").checked)
         for (const n of notices) {
-          const opts = { color: "#d9ac72", weight: 1.2, fillOpacity: 0.14 };
+          const id = noticeId(n), label = returnLabel(n);
+          if (hidden.has(id)) continue;
+          const opts = label ? { color: "#b34570", weight: 2, fillOpacity: 0.23, dashArray: "6 3" } : { color: "#d9ac72", weight: 1.2, fillOpacity: 0.14 };
           let l;
           if (n.circle) {
             const [[y, x], r] = n.circle;
@@ -274,15 +292,12 @@ export function createMap() {
               opts,
             );
           }
-          if (l)
-            l.addTo(areas).bindPopup(
-              "<b>" +
-                esc(n.code) +
-                "</b><small>" +
-                esc(n.time) +
-                " UTC</small>" +
-                esc(n.text).slice(0, 450),
-            );
+          if (l) {
+            l.addTo(areas);
+            noticeLayers.set(id, l);
+            if (label) l.bindTooltip(esc(label) + ' · ' + esc(n.code), { permanent:true, direction:'center', className:'return-label' });
+            bindNotice(l, n, () => { hidden.add(id); areas.removeLayer(l); noticeLayers.delete(id); });
+          }
         }
     }
   }
@@ -291,10 +306,33 @@ export function createMap() {
     latest
       ? map.setView([latest.lat, latest.lon], Math.max(3, map.getZoom()))
       : toast("所选时间无轨道数据");
-  $("zoomIn").onclick = () => map.zoomIn(0.5);
-  $("zoomOut").onclick = () => map.zoomOut(0.5);
+  $("zoomIn").onclick = () => map.zoomIn(1);
+  $("zoomOut").onclick = () => map.zoomOut(1);
+  function finishPick(point) {
+    if (!pendingPick) return;
+    const done = pendingPick; pendingPick = null;
+    map.getContainer().classList.remove('picking'); $("cancelPick").hidden = true;
+    done(point);
+  }
+  map.on('click', e => { if (pendingPick) finishPick(e.latlng.wrap()); });
+  $("cancelPick").onclick = () => finishPick(null);
+  document.addEventListener('keydown', e => { if (pendingPick && e.key === 'Escape') { e.preventDefault(); finishPick(null); } });
   return {
     paint,
+    pick(done) {
+      pendingPick = done; map.closePopup(); map.getContainer().classList.add('picking');
+      $("cancelPick").hidden = false; map.getContainer().focus();
+    },
+    focusNotice(n, redraw) {
+      const id = noticeId(n); hidden.delete(id); $("noticesOn").checked = true;
+      const coords = n.circle ? [n.circle[0]] : n.points;
+      if (!coords?.length) return;
+      let last = coords[0][1];
+      const bounds = L.latLngBounds(coords.map(([lat, lon]) => [lat, last = near(lon, last)]));
+      map.fitBounds(bounds, {maxZoom:6, padding:[38,38], animate:false});
+      noticeKey = ''; redraw();
+      noticeLayers.get(id)?.openPopup();
+    },
     go: (lat, lon) => map.setView([lat, lon], Math.max(4, map.getZoom())),
   };
 }
