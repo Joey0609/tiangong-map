@@ -9,7 +9,7 @@ export function createMap() {
     zoomControl: false,
     zoomSnap: 1,
     minZoom: 3,
-    maxZoom: 8,
+    maxZoom: 14,
     worldCopyJump: true,
     // Constrain latitude to the drawable Mercator surface; longitude wraps on drag.
     maxBounds: [[-85.05112878, -1e9], [85.05112878, 1e9]],
@@ -52,19 +52,13 @@ export function createMap() {
     noticeKey = "",
     lastOrbit = null,
     initial = true;
-  function limitZoom() {
-    const { x, y } = map.getSize();
-    map.setMinZoom(Math.min(8, Math.max(3, Math.ceil(Math.log2(Math.max(y, x / 2) / 256)))));
-  }
   function syncZoomControls() {
     $("zoomOut").disabled = map.getZoom() <= map.getMinZoom();
     $("zoomIn").disabled = map.getZoom() >= map.getMaxZoom();
   }
   function world() { map.setView([12, 32], map.getMinZoom()); }
-  limitZoom();
   world();
   syncZoomControls();
-  map.on("resize", () => { limitZoom(); syncZoomControls(); });
   map.on("zoomend", syncZoomControls);
   map.on("moveend", () => {
     const center = map.getCenter();
@@ -306,8 +300,8 @@ export function createMap() {
             const c = areaCenter(n);
             if (c) {
               const ref = L.circleMarker([c[0], near(c[1], center)], { radius:4, weight:2, color:'#fff', fillColor:'#763d81', fillOpacity:1, interactive:false });
-              l.on('popupopen', () => ref.addTo(map));
-              l.on('popupclose remove', () => ref.remove());
+              ref.addTo(map);
+              l.once('remove', () => ref.remove());
             }
             if (!label) l.bindTooltip(esc(n.code) + (pending ? ' · 待生效' : ' · 公告窗口内'));
             bindNotice(l, n, () => { hidden.add(id); areas.removeLayer(l); noticeLayers.delete(id); });
@@ -339,13 +333,24 @@ export function createMap() {
     },
     focusNotice(n, redraw) {
       const id = noticeId(n); hidden.delete(id); $("noticesOn").checked = true;
-      const coords = n.circle ? [n.circle[0]] : n.points;
-      if (!coords?.length) return;
-      let last = coords[0][1];
-      const bounds = L.latLngBounds(coords.map(([lat, lon]) => [lat, last = near(lon, last)]));
-      map.fitBounds(bounds, {maxZoom:6, padding:[38,38], animate:false});
+      const c = areaCenter(n);
+      if (!c) return;
+      const middle = L.latLng(c[0], near(c[1], map.getCenter().lng));
+      const extent = n.circle ? middle.toBounds(2 * n.circle[1]) : null;
+      const vertices = extent ? [extent.getNorthWest(), extent.getSouthEast()] : n.points.map(([lat, lon]) => L.latLng(lat, near(lon, middle.lng)));
+      // Fit symmetric projected extents so an asymmetric polygon stays in view
+      // while its area centroid, not its bounding-box center, stays centered.
+      const origin = map.project(middle, 0);
+      let dx = 0, dy = 0;
+      for (const vertex of vertices) {
+        const d = map.project(vertex, 0).subtract(origin);
+        dx = Math.max(dx, Math.abs(d.x)); dy = Math.max(dy, Math.abs(d.y));
+      }
+      const delta = L.point(dx, dy);
+      const bounds = L.latLngBounds(map.unproject(origin.subtract(delta), 0), map.unproject(origin.add(delta), 0));
+      map.setView(middle, map.getBoundsZoom(bounds, false, L.point(76, 76)), { animate:false });
       noticeKey = ''; redraw();
-      noticeLayers.get(id)?.openPopup();
+      noticeLayers.get(id)?.openPopup(middle);
     },
     go: (lat, lon) => map.setView([lat, lon], Math.max(4, map.getZoom())),
   };
