@@ -114,7 +114,7 @@ async function sync(manual = false) {
 $("timeline").oninput = (e) => selectTime(Number(e.target.value));
 $("nowBtn").onclick = () => selectTime(null);
 $("refresh").onclick = () => sync(true);
-for (const id of ["trackOn", "siteOn", "stationsOn", "noticesOn"])
+for (const id of ["trackOn", "siteOn", "stationsOn"])
   $(id).onchange = tick;
 setInterval(tick, 1000);
 setInterval(sync, 60000);

@@ -86,8 +86,8 @@ body[data-theme="vector"] {
 }
 
 [data-theme="vector"] .leaflet-tooltip,
-[data-theme="vector"] .leaflet-popup-content-wrapper,
-[data-theme="vector"] .leaflet-popup-tip {
+[data-theme="vector"] .leaflet-popup:not(.notam-info-popup) .leaflet-popup-content-wrapper,
+[data-theme="vector"] .leaflet-popup:not(.notam-info-popup) .leaflet-popup-tip {
   color: #153a2b;
   background: #fffffff2;
   border-color: #97b7a4;

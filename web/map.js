@@ -1,5 +1,5 @@
 import { areaCenter } from './area-center.js';
-import { noticeId, returnLabel, bindNotice } from "./advisories.js";
+import { bindNotice } from "./vendor/notams-popup.js";
 import { basemap } from "./basemap.js";
 import { position, geodetic, observer } from "./orbit.js";
 import { $, esc, toast, icon } from "./ui.js";
@@ -26,7 +26,7 @@ export function createMap() {
     paths = L.layerGroup().addTo(map);
   const pins = L.layerGroup().addTo(map),
     areas = L.layerGroup().addTo(map);
-  const noticeLayers = new Map(), hidden = new Set();
+  const noticeLayers = new Map();
   let pendingPick = null;
   const connect = L.layerGroup().addTo(map);
   const marker = L.marker([0, 0], {
@@ -264,22 +264,18 @@ export function createMap() {
         if (confirmed?.kind === "direct") line(s, "#399364", null);
         else if (isUp) line(s, theme === "vector" ? "#226c65" : "#c1f1df", "3 4");
       }
-    if (!$("noticesOn").checked) hidden.clear();
     const nkey = JSON.stringify([
       version,
       notices.map((n) => [n.id, n.code, t < n.period[0]]),
-      $("noticesOn").checked,
       Math.round(center / 90),
     ]);
     if (nkey !== noticeKey) {
       noticeKey = nkey;
       areas.clearLayers();
       noticeLayers.clear();
-      if ($("noticesOn").checked)
         for (const n of notices) {
-          const id = noticeId(n), label = returnLabel(n);
-          if (hidden.has(id)) continue;
-          const opts = label ? { color: "#b34570", weight: 2, fillOpacity: 0.23, dashArray: "6 3" } : { color: "#d9ac72", weight: 1.2, fillOpacity: 0.14 };
+          const id = n.id;
+          const opts = { color: "#b34570", weight: 2, fillOpacity: 0.23, dashArray: "6 3" };
           const pending = t < n.period[0];
           if (pending) Object.assign(opts, { dashArray:'3 6', fillOpacity:0.08 });
           let l;
@@ -296,15 +292,14 @@ export function createMap() {
           if (l) {
             l.addTo(areas);
             noticeLayers.set(id, l);
-            if (label) l.bindTooltip(esc(label) + ' · ' + esc(n.code), { permanent:true, direction:'center', className:'return-label' });
             const c = areaCenter(n);
             if (c) {
               const ref = L.circleMarker([c[0], near(c[1], center)], { radius:4, weight:2, color:'#fff', fillColor:'#763d81', fillOpacity:1, interactive:false });
               ref.addTo(map);
               l.once('remove', () => ref.remove());
             }
-            if (!label) l.bindTooltip(esc(n.code) + (pending ? ' · 待生效' : ' · 公告窗口内'));
-            bindNotice(l, n, () => { hidden.add(id); areas.removeLayer(l); noticeLayers.delete(id); });
+            l.bindTooltip(esc(n.code), {permanent:true, direction:'center', className:'return-label'});
+            bindNotice(l, n);
           }
         }
     }
@@ -332,7 +327,7 @@ export function createMap() {
       $("cancelPick").hidden = false; map.getContainer().focus();
     },
     focusNotice(n, redraw) {
-      const id = noticeId(n); hidden.delete(id); $("noticesOn").checked = true;
+      const id = n.id;
       const c = areaCenter(n);
       if (!c) return;
       const middle = L.latLng(c[0], near(c[1], map.getCenter().lng));

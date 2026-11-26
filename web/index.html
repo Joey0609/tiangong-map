@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="themes.css" />
     <link rel="stylesheet" href="advisories.css" />
+    <link rel="stylesheet" href="vendor/notams-popup.css" />
   </head>
   <body>
     <main>
@@ -102,15 +103,12 @@
           /></label>
           <div id="stations"></div>
           <div id="contacts"></div>
-          <label class="toggle"
-            ><b>航行通告</b><input type="checkbox" id="noticesOn" checked
-          /></label>
           <div class="line">
             <span id="noticeCount"></span
             ><button id="noticesBtn" class="link">查看通告 <svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#arrow-up-right"></use></svg></button>
           </div>
           <small id="noticeHint"></small>
-          <div id="returnNotices"></div>
+
         </section>
         <section id="sources" class="view" hidden>
           <div id="sourceList"></div>

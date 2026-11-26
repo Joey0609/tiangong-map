@@ -4,15 +4,3 @@
 #pickSite { margin-bottom:8px; }
 #returnNotices h3 { margin-top:12px; }
 .return-label { font-size:11px; pointer-events:none; }
-.notam-info-popup .leaflet-popup-content-wrapper { border-radius:6px; overflow:hidden; padding:0; }
-.notam-info-popup .leaflet-popup-content { margin:0; width:min(300px,calc(100vw - 48px)) !important; }
-.notam-info-popup .advisory-head { background:linear-gradient(135deg,#243064,#381d57); color:#fff; display:flex; gap:2px; align-items:center; padding:6px 8px; }
-.advisory-head b { flex:1; font-size:14px; }
-.advisory-head button { color:inherit; min-width:24px; height:26px; padding:3px; }
-.advisory-head button:hover,.advisory-head [aria-pressed=true] { background:#ffffff40; }
-.advisory-body { padding:10px 12px; line-height:1.45; font-size:12px; max-height:clamp(80px,calc(50dvh - 135px),285px); overflow:auto; }
-.advisory-body small { display:block; margin-top:5px; font-weight:600; font-size:11px; }
-.advisory-cols { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.advisory pre { white-space:pre-wrap; overflow-wrap:anywhere; margin:2px 0; font:inherit; }
-.advisory details { margin-top:8px; }
-.advisory summary { cursor:pointer; }
