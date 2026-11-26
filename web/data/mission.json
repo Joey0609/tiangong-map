@@ -68,25 +68,28 @@
   ],
   "stations": [
     {
-      "id": "miyun",
-      "name": "密云站",
-      "lat": 40.38,
-      "lon": 116.84,
-      "source": "https://lssf.cas.cn/sszs/gykj/zgygwx/ssjj/202503/t20250314_5050280.html"
+      "id": "weinan",
+      "name": "渭南测控站",
+      "episode": "神舟十三号发射 · “渭南，发现目标！”",
+      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml"
     },
     {
-      "id": "sanya",
-      "name": "三亚站",
-      "lat": 18.25,
-      "lon": 109.51,
-      "source": "https://lssf.cas.cn/sszs/gykj/zgygwx/ssjj/202503/t20250314_5050280.html"
+      "id": "qingdao",
+      "name": "青岛测控站",
+      "episode": "神舟十三号发射 · “青岛，USB、雷达跟踪正常！”",
+      "source": "https://m.news.cctv.com/2021/10/16/ARTI08MkRsfHYn0i04OWR1VJ211016.shtml"
+    },
+    {
+      "id": "dongfeng",
+      "name": "东风测控站",
+      "episode": "神舟十八号返回 · “青山发现目标。”",
+      "source": "https://www.stdaily.com/web/gdxw/2024-11/05/content_253038.html"
     },
     {
       "id": "kashi",
-      "name": "喀什站",
-      "lat": 39.47,
-      "lon": 75.99,
-      "source": "https://lssf.cas.cn/sszs/gykj/zgygwx/ssjj/202503/t20250314_5050280.html"
+      "name": "喀什测控站",
+      "episode": "神舟六号返回 · 报道记载发现目标，未引述原话",
+      "source": "https://news.sina.com.cn/c/2005-10-17/17478035085.shtml"
     }
   ],
   "contacts": []

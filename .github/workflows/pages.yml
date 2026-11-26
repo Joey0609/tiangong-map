@@ -31,7 +31,7 @@ jobs:
       - name: Refresh fixed sources
         run: python collector.py
       - name: Check orbit and pass forecasts
-        run: node tests/verify.mjs
+        run: npm test
       - name: Preserve source snapshots
         run: |
           git add web/data/latest.json web/data/history

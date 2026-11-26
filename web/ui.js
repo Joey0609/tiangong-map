@@ -7,6 +7,7 @@ export const esc = (value) =>
         c
       ],
   );
+export const icon = name => `<svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#${name}"></use></svg>`;
 export function anchor(url, title) {
   try {
     if (new URL(url).protocol !== "https:") return esc(title);
@@ -17,7 +18,7 @@ export function anchor(url, title) {
     '<a target="_blank" rel="noopener" href="' +
     esc(url) +
     '">' +
-    esc(title) +
+    esc(title) + " " + icon("arrow-up-right") +
     "</a>"
   );
 }

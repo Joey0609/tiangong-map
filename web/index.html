@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0c2229" />
     <title>天宫任务地图</title>
-    <link rel="icon" href="data:," />
+    <link rel="icon" href="vendor/lucide-orbit.svg" />
     <link rel="stylesheet" href="vendor/leaflet.css" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="themes.css" />
@@ -15,7 +15,7 @@
       <div id="map" aria-label="天宫轨道与地面观测地图"></div>
       <header>
         <div class="brand">
-          <i class="orbit-logo"></i>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#orbit"></use></svg>
           <h1>天宫任务地图</h1>
         </div>
         <span class="head-divider"></span><span id="mode">实时推算</span>
@@ -27,25 +27,24 @@
         <div class="clock">
           <time id="clock">--:--:--</time><small>北京时间</small>
         </div>
-        <button id="refresh" title="刷新数据" aria-label="刷新数据">↻</button>
+        <button id="refresh" title="刷新数据" aria-label="刷新数据"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#refresh-cw"></use></svg></button>
       </header>
       <nav class="rail" aria-label="地图面板">
-        <button data-view="observer" class="active"><i>⌖</i>观测</button
-        ><button data-view="mission"><i>◴</i>任务</button
-        ><button data-view="layers"><i>▱</i>图层</button
-        ><button data-view="sources"><i>≡</i>来源</button>
+        <button data-view="observer" class="active"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#telescope"></use></svg>观测</button
+        ><button data-view="mission"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#rocket"></use></svg>任务</button
+        ><button data-view="layers"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#layers"></use></svg>图层</button
+        ><button data-view="sources"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#database"></use></svg>来源</button>
       </nav>
       <div class="maptools">
-        <button id="zoomIn" aria-label="放大">+</button
-        ><button id="zoomOut" aria-label="缩小">−</button
-        ><button id="locate" aria-label="定位空间站" title="定位空间站">
-          ⌖</button
-        ><button id="fit" aria-label="全球视图" title="全球视图">◎</button>
+        <button id="zoomIn" aria-label="放大"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#plus"></use></svg></button
+        ><button id="zoomOut" aria-label="缩小"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#minus"></use></svg></button
+        ><button id="locate" aria-label="定位空间站" title="定位空间站"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#locate-fixed"></use></svg></button
+        ><button id="fit" aria-label="全球视图" title="全球视图"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#globe"></use></svg></button>
       </div>
       <aside id="drawer">
         <div class="panel-head">
           <h2 id="drawerTitle">固定观测点</h2>
-          <button id="hideDrawer" class="close" aria-label="收起面板">×</button>
+          <button id="hideDrawer" class="close" aria-label="收起面板"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#x"></use></svg></button>
         </div>
         <section id="observer" class="view">
           <div class="line">
@@ -66,7 +65,7 @@
           </div>
           <div class="subhead">
             <h3>预计过境</h3>
-            <button id="allPass" class="link">全部 ↗</button>
+            <button id="allPass" class="link">全部 <svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#arrow-up-right"></use></svg></button>
           </div>
           <div id="passList"></div>
           <small id="mask"></small>
@@ -79,11 +78,11 @@
           <small>返回日期 · 北京时间</small>
           <h4 id="window">—</h4>
           <p id="basis"></p>
-          <button id="historyBtn" class="link">历史样本 ↗</button>
+          <button id="historyBtn" class="link">历史样本 <svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#arrow-up-right"></use></svg></button>
           <dl id="crew"></dl>
           <div class="subhead">
             <h3>任务进展</h3>
-            <button id="newsBtn" class="link">官方动态 ↗</button>
+            <button id="newsBtn" class="link">官方动态 <svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#arrow-up-right"></use></svg></button>
           </div>
           <ol id="events"></ol>
         </section>
@@ -101,14 +100,13 @@
             ><b>地面站与通信</b><input type="checkbox" id="stationsOn" checked
           /></label>
           <div id="stations"></div>
-          <small>遥感地面站 · 以所在地区中心示意</small>
           <div id="contacts"></div>
           <label class="toggle"
             ><b>航行通告</b><input type="checkbox" id="noticesOn" checked
           /></label>
           <div class="line">
             <span id="noticeCount"></span
-            ><button id="noticesBtn" class="link">查看通告 ↗</button>
+            ><button id="noticesBtn" class="link">查看通告 <svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#arrow-up-right"></use></svg></button>
           </div>
           <small id="noticeHint"></small>
         </section>
@@ -119,7 +117,7 @@
       </aside>
       <div class="bottom">
         <div class="telemetry">
-          <div class="craft"><i class="spacecraft"></i><b>天宫空间站</b></div>
+          <div class="craft"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#satellite"></use></svg><b>天宫空间站</b></div>
           <span id="lat">—</span><span id="lon">—</span
           ><span id="height">—</span>
         </div>
@@ -147,7 +145,7 @@
       <form id="siteForm">
         <div class="panel-head">
           <h2>编辑固定观测点</h2>
-          <button type="button" class="close" aria-label="关闭">×</button>
+          <button type="button" class="close" aria-label="关闭"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#x"></use></svg></button>
         </div>
         <div class="pad">
           <label>名称<input name="name" maxlength="32" required /></label>
@@ -196,7 +194,7 @@
     <dialog id="details">
       <div class="panel-head">
         <h2 id="detailTitle"></h2>
-        <button class="close" aria-label="关闭">×</button>
+        <button class="close" aria-label="关闭"><svg class="icon" aria-hidden="true" focusable="false"><use href="vendor/lucide.svg#x"></use></svg></button>
       </div>
       <div class="pad" id="detailBody"></div>
     </dialog>

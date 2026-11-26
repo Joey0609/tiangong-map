@@ -84,12 +84,7 @@ body[data-theme="vector"] {
 [data-theme="vector"] .maptools button + button {
   border-color: #d8e4dd;
 }
-[data-theme="vector"] .orbit-logo {
-  border-color: #21684d;
-}
-[data-theme="vector"] .orbit-logo:after {
-  background: #21684d;
-}
+
 [data-theme="vector"] .leaflet-tooltip,
 [data-theme="vector"] .leaflet-popup-content-wrapper,
 [data-theme="vector"] .leaflet-popup-tip {
@@ -142,12 +137,21 @@ body[data-theme="vector"] {
   #refresh {
     width: 23px;
   }
-  .orbit-logo:after {
-    left: 16px;
-  }
+
 }
 @media (max-width: 380px) {
   .clock {
     display: none;
   }
 }
+
+.icon { width: 1.2em; height: 1.2em; display: inline-block; vertical-align: middle; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; pointer-events: none; }
+.brand > .icon, .craft > .icon { width: 24px; height: 24px; }
+.rail .icon, .maptools .icon { width: 20px; height: 20px; }
+.link .icon, a .icon { width: 13px; height: 13px; }
+.map-pin-icon, .sat-icon { display: grid; place-items: center; color: #123f39; background: #f5fff9; border: 1px solid #327262; border-radius: 50%; box-shadow: 0 1px 5px #142c3e66; }
+.map-pin-icon .icon { width: 15px; height: 15px; }
+.sat-icon .icon { width: 23px; height: 23px; }
+.maptools button:disabled { opacity: .45; cursor: default; }
+
+.rail .icon { margin-inline: auto; }
