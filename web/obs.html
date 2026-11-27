@@ -1,0 +1,33 @@
+<!doctype html><html lang="zh-CN" class="viewer-mode-obs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>返回舱 · OBS</title><link rel="stylesheet" href="vendor/rmc/base.css"><link rel="stylesheet" href="vendor/rmc/visitor.css"></head><body data-view-mode="obs" class="viewer-mode-obs">
+  <section class="mission-overlay" aria-live="polite">
+    <div class="mission-overlay-clock">
+      <div class="mission-overlay-time" id="overlayClockTime">00:00:00</div>
+    </div>
+    <div class="mission-overlay-line">
+      <span id="overlayMissionName">北京时间</span>
+    </div>
+  </section>
+
+  <section class="timeline-fixed-layer" aria-hidden="true">
+    <aside class="timeline-side timeline-side-left" aria-hidden="true">
+      <div class="timeline-side-bg"></div>
+      <div class="telemetry-gauges" id="telemetryGaugesLeft"><div class="telemetry-gauge-slot" id="speed"></div><div class="telemetry-gauge-slot" id="height"></div></div>
+    </aside>
+    <aside class="timeline-side timeline-side-right" aria-hidden="true">
+      <div class="timeline-side-bg"></div>
+      <div class="telemetry-gauges" id="telemetryGaugesRight"><div class="telemetry-gauge-slot"><svg width="138" height="138" viewBox="0 0 210 160" role="img" aria-label="神舟返回舱外形示意"><g id="capsulePitch" fill="none" stroke="#d6d9da" stroke-width="1.7"><path d="M73 33 Q104 20 137 33 L143 44 Q155 52 164 102 Q166 118 154 128 Q104 149 55 128 Q44 115 46 103 Q55 55 67 43Z"/><ellipse cx="105" cy="33" rx="32" ry="7"/><path d="M67 43Q105 59 143 44 M46 103Q103 130 164 102 M50 117Q104 141 161 115 M74 49L62 106 M135 50L148 106"/><ellipse cx="105" cy="81" rx="23" ry="24"/><ellipse cx="105" cy="81" rx="18" ry="19"/><path d="M89 81h6m20 0h6"/></g></svg></div><div class="telemetry-gauge-slot"><svg id="sphere" width="138" height="138" viewBox="54 -4 252 252" role="img" aria-label="无地理配准的相对球面与仿真位置"><defs><radialGradient id="shade" cx="32%" cy="25%" r="85%"><stop stop-color="#414349"/><stop offset="1" stop-color="#08090b"/></radialGradient></defs><g transform="translate(180 122)"><circle r="103" fill="url(#shade)" stroke="#899096"/><g fill="none" stroke="#63676d" stroke-width=".75"><ellipse rx="38" ry="103"/><ellipse rx="76" ry="103"/><path d="M0 -103V103 M-103 0H103 M-89 -52H89 M-89 52H89 M-65 -80H65 M-65 80H65"/></g><g transform="rotate(-22)"><path fill="none" stroke="#969aa1" stroke-dasharray="3 4" d="M-96 18Q0 -39 96 18"/><path id="trail" fill="none" stroke="white" stroke-width="2"/><circle id="dot" fill="white" stroke="#111" stroke-width="2" r="5"/></g></g></svg></div></div>
+    </aside>
+    <div class="timeline-mount" id="timelineMount"></div>
+  </section>
+
+<script src="vendor/rmc/timeline/constants.js"></script>
+<script src="vendor/rmc/timeline/easing.js"></script>
+<script src="vendor/rmc/timeline/color.js"></script>
+<script src="vendor/rmc/timeline/time-map.js"></script>
+<script src="vendor/rmc/timeline/geometry.js"></script>
+<script src="vendor/rmc/timeline/nodes.js"></script>
+<script src="vendor/rmc/timeline/svg-drawing.js"></script>
+<script src="vendor/rmc/timeline/renderer.js"></script>
+<script src="vendor/rmc/gauge.js"></script>
+<script src="vendor/rmc/viewer-layout.js"></script>
+<script type="module" src="obs.js"></script></body></html>

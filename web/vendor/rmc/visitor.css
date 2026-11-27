@@ -1,0 +1,1383 @@
+body {
+  overflow-x: hidden;
+}
+
+body[data-view-mode="visitor"] {
+  /* 64 度弧面的高度随屏宽增长，额外预留节点文字和模糊边缘的空间。 */
+  --visitor-timeline-height: max(200px, calc(50vw * (1 - cos(32deg)) + 96px));
+}
+
+body[data-view-mode="visitor"] .visitor-shell {
+  padding-bottom: max(180px, var(--visitor-timeline-height));
+}
+
+body[data-view-mode="visitor"] .timeline-mount {
+  width: 100%;
+  height: var(--visitor-timeline-height);
+}
+
+body.viewer-mode-obs,
+body.viewer-mode-video {
+  overflow: hidden;
+}
+
+.viewer-layout-root {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform: translate(-50%, -50%) scale(1);
+  transform-origin: center center;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 40;
+}
+
+body.viewer-mode-obs .viewer-layout-root,
+body.viewer-mode-video .viewer-layout-root {
+  display: block;
+}
+
+html.viewer-mode-obs,
+html.viewer-mode-obs body {
+  background: transparent !important;
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+body.viewer-mode-obs,
+body.viewer-mode-video {
+  background: transparent !important;
+}
+
+.mode-video-background {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  pointer-events: none;
+  background: transparent;
+}
+
+body.viewer-mode-video .mode-video-background {
+  display: block !important;
+}
+
+body.viewer-mode-obs .mode-video-background {
+  display: none !important;
+}
+
+body.viewer-mode-obs .nebula,
+body.viewer-mode-obs .grid-overlay,
+body.viewer-mode-video .nebula,
+body.viewer-mode-video .grid-overlay {
+  display: none;
+}
+
+body.viewer-mode-obs .visitor-shell,
+body.viewer-mode-video .visitor-shell {
+  display: none;
+}
+
+body.viewer-mode-obs .timeline-side-bg,
+body.viewer-mode-video .timeline-side-bg {
+  display: none;
+}
+
+body.viewer-mode-obs .timeline-fixed-layer,
+body.viewer-mode-video .timeline-fixed-layer {
+  z-index: 36;
+}
+
+body.viewer-mode-obs .viewer-layout-root .timeline-fixed-layer,
+body.viewer-mode-video .viewer-layout-root .timeline-fixed-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+body.viewer-mode-obs .mission-overlay,
+body.viewer-mode-video .mission-overlay {
+  width: min(42rem, 96vw);
+  bottom: 20px;
+  z-index: 52;
+}
+
+body.viewer-mode-obs .viewer-layout-root .mission-overlay,
+body.viewer-mode-video .viewer-layout-root .mission-overlay {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  width: 672px;
+  transform: translateX(-50%);
+  z-index: 52;
+  --overlay-prefix-width: 36px;
+  --overlay-prefix-font-size: 28px;
+  --overlay-time-font-size: 36px;
+  --overlay-line-font-size: 16px;
+}
+
+body.viewer-mode-obs .mission-overlay-line,
+body.viewer-mode-video .mission-overlay-line {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+body.viewer-mode-obs .theme-btn,
+body.viewer-mode-video .theme-btn {
+  display: none !important;
+}
+
+body.viewer-mode-obs .theme-modal,
+body.viewer-mode-video .theme-modal {
+  display: none !important;
+}
+
+.nebula,
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.nebula {
+  background: radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 30%),
+    radial-gradient(circle at 82% 14%, color-mix(in srgb, var(--warn) 24%, transparent), transparent 30%),
+    radial-gradient(circle at 52% 82%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 34%);
+  animation: nebulaFloat 16s ease-in-out infinite alternate;
+}
+
+.grid-overlay {
+  background-image: linear-gradient(color-mix(in srgb, var(--line) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 55%, transparent) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+}
+
+.visitor-shell {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 24px 24px 180px;
+  display: grid;
+  gap: 18px;
+}
+
+.hero {
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--surface-hero);
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--glow) 25%, transparent);
+}
+
+.hero-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.hero-meta-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.hero .tag {
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  color: var(--muted);
+  font-family: var(--font-saira);
+}
+
+.copyright {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hero h1 {
+  margin: 10px 0 4px;
+  font-size: clamp(24px, 4vw, 44px);
+  font-family: var(--font-ui);
+}
+
+#modelName,
+#payloadName,
+#missionClock {
+  font-family: var(--font-saira);
+}
+
+.hero-title {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.payload-name {
+  font-size: clamp(18px, 2.1vw, 28px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--ink) 84%, var(--muted));
+}
+
+.hero p {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+.hero-tools {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-btn,
+.btn {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: var(--surface-button);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-saira);
+}
+
+.btn.accent {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 56%, #1f6f5d), color-mix(in srgb, var(--accent) 66%, #2a866f));
+}
+
+.clock-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.clock-card {
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.clock-card .label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.clock-card .clock {
+  font-size: clamp(48px, 8.5vw, 122px);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  font-family: var(--font-saira);
+}
+
+.clock-card #missionClock {
+  display: flex;
+  align-items: center;
+  min-height: clamp(48px, 8.5vw, 122px);
+}
+
+.pulse-card {
+  animation: pulseGlow 1.6s infinite;
+}
+
+.timeline-info {
+  display: grid;
+  grid-template-columns: 2fr 3fr 3fr;
+  gap: 14px;
+}
+
+@media (max-width: 768px), (orientation: portrait) {
+  .timeline-info {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.timeline-info .panel {
+  padding: 16px;
+}
+
+.timeline-info h2 {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.timeline-info .big {
+  font-size: clamp(18px, 2.8vw, 28px);
+  font-weight: 700;
+}
+
+.event-node {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-name {
+  font-size: clamp(18px, 2.8vw, 26px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.event-time {
+  font-size: 15px;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.event-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.focus-nodes-wrap {
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.focus-nodes-wrap h2 {
+  margin: 0 0 10px;
+}
+
+.focus-timeline {
+  display: block;
+  overflow: hidden;
+  padding: 6px 2px 8px;
+}
+
+.focus-node {
+  min-width: 190px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  background: var(--surface-1);
+}
+
+.focus-node .name {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.focus-node .meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.timeline-fixed-layer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 28;
+  pointer-events: none;
+}
+
+.timeline-side {
+  position: absolute;
+  bottom: 0;
+  width: min(36vw, 560px);
+  height: 190px;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 1;
+  transition: opacity 280ms ease;
+  will-change: opacity;
+}
+
+body.viewer-mode-obs .viewer-layout-root .timeline-side,
+body.viewer-mode-video .viewer-layout-root .timeline-side {
+  width: 560px;
+  height: 190px;
+}
+
+.timeline-side-cover {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: min(32vw, 520px);
+  height: 160px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-18px) scale(1);
+  /* filter: blur(1px); */
+  transition: opacity 600ms ease, transform 600ms ease;
+  will-change: opacity, transform;
+}
+
+body.viewer-mode-obs .viewer-layout-root .timeline-side-cover,
+body.viewer-mode-video .viewer-layout-root .timeline-side-cover {
+  width: 520px;
+  height: 160px;
+}
+
+.timeline-side-right .timeline-side-cover {
+  left: auto;
+  right: 0;
+  transform: translateX(18px) scale(1);
+}
+
+.timeline-side:not(.telemetry-panel-hidden) .timeline-side-cover {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.timeline-side-cover svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  shape-rendering: geometricPrecision;
+}
+
+.timeline-side .timeline-side-bg {
+  transition: opacity 220ms ease;
+}
+
+.timeline-side.telemetry-panel-hidden {
+  opacity: 0;
+}
+
+.timeline-side.telemetry-panel-hidden .timeline-side-bg {
+  opacity: 0;
+}
+
+.timeline-side-left {
+  left: 0;
+  justify-content: flex-start;
+  padding-left: 28px;
+}
+
+.timeline-side-right {
+  right: 0;
+  justify-content: flex-end;
+  padding-right: 28px;
+}
+
+.timeline-side-bg {
+  position: absolute;
+  bottom: 0;
+  width: min(35vw, 520px);
+  height: 126px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+  opacity: 0.8;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--surface-axis-tag) 88%, transparent) 0%,
+      color-mix(in srgb, var(--surface-axis) 72%, transparent) 62%,
+      rgba(0, 0, 0, 0) 100%);
+}
+
+body.viewer-mode-obs .viewer-layout-root .timeline-side-bg,
+body.viewer-mode-video .viewer-layout-root .timeline-side-bg {
+  width: 520px;
+  height: 126px;
+}
+
+.timeline-side-left .timeline-side-bg {
+  left: 0;
+  clip-path: polygon(0 100%, 0 36%, 70% 0, 100% 0, 100% 100%);
+}
+
+.timeline-side-right .timeline-side-bg {
+  right: 0;
+  clip-path: polygon(0 0, 30% 0, 100% 36%, 100% 100%, 0 100%);
+}
+
+.telemetry-gauges {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin-bottom: 8px;
+  opacity: 1;
+  transition: opacity 500ms ease;
+}
+
+.telemetry-gauges.telemetry-gauges-faded {
+  opacity: 0;
+}
+
+.telemetry-gauge-slot {
+  width: 138px;
+  height: 138px;
+}
+
+.telemetry-gauge-widget {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: rgba(255, 255, 255, 0.98);
+  opacity: 1;
+  transform: scale(1);
+  transform-origin: center;
+}
+
+.engine-layout-gauge .telemetry-gauge-text-root {
+  opacity: 0 !important;
+}
+
+.telemetry-engine-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.telemetry-engine-svg {
+  width: 72%;
+  height: 72%;
+  overflow: visible;
+  transform-origin: center center;
+}
+
+.telemetry-engine-canvas {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.telemetry-engine-canvas .telemetry-engine-svg {
+  position: absolute;
+}
+
+.telemetry-engine-bg {
+  pointer-events: none;
+}
+
+.telemetry-engine-node {
+  fill: rgba(255, 255, 255, 1);
+  stroke: rgba(255, 255, 255, 1);
+  stroke-width: 1.3;
+  opacity: 0.18;
+  transition: opacity 600ms ease;
+}
+
+.telemetry-engine-node.is-active {
+  opacity: 1;
+}
+
+.telemetry-engine-node.is-inactive {
+  opacity: 0.18;
+}
+
+/* 预设切换动画 */
+.telemetry-engine-preset-exit {
+  animation: enginePresetExit 400ms ease forwards;
+}
+
+.telemetry-engine-preset-enter {
+  animation: enginePresetEnter 400ms ease forwards;
+}
+
+@keyframes enginePresetExit {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes enginePresetEnter {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.telemetry-engine-caption {
+  display: none !important;
+}
+
+.telemetry-engine-label,
+.telemetry-engine-meta {
+  font-family: var(--font-saira);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: rgba(232, 235, 240, 0.88);
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.62);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.telemetry-engine-meta {
+  color: rgba(205, 214, 224, 0.72);
+}
+
+.telemetry-gauge-widget .telemetry-gauge-circle {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.telemetry-gauge-widget .telemetry-gauge-anim-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+
+.telemetry-gauge-widget .telemetry-gauge-text-root {
+  opacity: 0;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-visible .telemetry-gauge-circle {
+  opacity: 1;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-visible .telemetry-gauge-anim-path {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-visible .telemetry-gauge-text-root {
+  opacity: 1;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-visible .telemetry-engine-overlay {
+  opacity: 1;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-hidden .telemetry-gauge-circle {
+  opacity: 0;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-hidden .telemetry-gauge-anim-path {
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-hidden .telemetry-gauge-text-root {
+  opacity: 0;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-hidden .telemetry-engine-overlay {
+  opacity: 0;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-hidden {
+  transform: scale(0.01);
+}
+
+.telemetry-gauge-widget.telemetry-gauge-enter {
+  /* 入场先快后慢，并将减速阶段拉长。 */
+  animation: telemetryGaugeScaleIn 400ms cubic-bezier(0.08, 0.95, 0.22, 1) forwards;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-enter .telemetry-gauge-circle {
+  animation: telemetryGaugeBgIn 500ms linear 300ms forwards,
+    telemetryGaugeBgScaleIn 500ms ease 300ms forwards;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-enter .telemetry-gauge-anim-path {
+  animation: telemetryGaugeLineIn 760ms cubic-bezier(0.21, 0.61, 0.34, 1) 500ms forwards;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-enter .telemetry-gauge-text-root {
+  animation: telemetryGaugeTextIn 240ms ease 930ms forwards;
+}
+
+.engine-layout-gauge.telemetry-gauge-enter .telemetry-engine-overlay {
+  animation: telemetryGaugeTextIn 260ms ease 500ms forwards;
+}
+
+/* 退场总时长为 0.6s；容器在 0.2–0.6s 进行缩放和淡出。 */
+.telemetry-gauge-widget.telemetry-gauge-exit,
+.telemetry-gauge-widget.telemetry-gauge-reverse-exit {
+  /* 先慢后快，并将慢速阶段拉长。 */
+  animation: telemetryGaugeFadeScaleOut 400ms cubic-bezier(0.55, 0, 0.9, 0.35) 200ms both;
+}
+
+/* 按入场视觉顺序倒放：文字 → 圆弧、数值弧线与刻度 → 整体容器。 */
+.telemetry-gauge-widget.telemetry-gauge-exit .telemetry-gauge-circle,
+.telemetry-gauge-widget.telemetry-gauge-reverse-exit .telemetry-gauge-circle {
+  animation: telemetryGaugeBgOut 160ms ease 180ms both;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-exit .telemetry-gauge-anim-path,
+.telemetry-gauge-widget.telemetry-gauge-reverse-exit .telemetry-gauge-anim-path {
+  animation: telemetryGaugeLineOut 260ms cubic-bezier(0.55, 0, 0.9, 0.35) 180ms both;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-exit .telemetry-gauge-text-root,
+.telemetry-gauge-widget.telemetry-gauge-reverse-exit .telemetry-gauge-text-root {
+  animation: telemetryGaugeTextOut 180ms ease both;
+}
+
+.telemetry-gauge-widget.telemetry-gauge-exit .telemetry-engine-overlay,
+.telemetry-gauge-widget.telemetry-gauge-reverse-exit .telemetry-engine-overlay {
+  animation: telemetryGaugeTextOut 180ms ease both;
+}
+
+.telemetry-gauge-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.telemetry-gauge-bg-arc-main {
+  stroke: rgba(148, 163, 184, 0.78);
+}
+
+.telemetry-gauge-bg-arc-danger {
+  stroke: rgba(148, 163, 184, 0.78);
+}
+
+.telemetry-gauge-progress-main {
+  stroke: rgba(245, 245, 244, 0.97);
+}
+
+.telemetry-gauge-progress-danger {
+  stroke: rgba(245, 245, 244, 0.97);
+}
+
+.telemetry-gauge-tick-start {
+  stroke: rgba(245, 245, 244, 0.96);
+}
+
+.telemetry-gauge-tick-end {
+  stroke: rgba(163, 163, 163, 0.75);
+}
+
+.telemetry-gauge-text-root {
+  fill: currentColor;
+  font-family: var(--font-saira);
+  user-select: none;
+}
+
+.telemetry-gauge-text-root.telemetry-gauge-text-switch {
+  animation: telemetryGaugeTextSwitch 500ms ease forwards;
+}
+
+@keyframes telemetryGaugeBgIn {
+  from {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes telemetryGaugeBgScaleIn {
+  from {
+    transform: scale(0.6);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes telemetryGaugeBgOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes telemetryGaugeLineIn {
+  from {
+    stroke-dashoffset: 1;
+    opacity: 0.24;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes telemetryGaugeLineOut {
+  from {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  to {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+}
+
+@keyframes telemetryGaugeTextIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes telemetryGaugeTextOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes telemetryGaugeTextSwitch {
+  0% {
+    opacity: 1;
+  }
+  46% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes telemetryGaugeFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes telemetryGaugeScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.01);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes telemetryGaugeScaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.01);
+  }
+}
+
+@keyframes telemetryGaugeFadeScaleOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.01);
+  }
+}
+
+.telemetry-gauge-label,
+.telemetry-gauge-unit {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  fill: rgba(212, 212, 216, 0.9);
+}
+
+.telemetry-gauge-value {
+  font-size: 42px;
+  /* font-weight: 600; */
+  letter-spacing: 0.02em;
+  fill: rgba(255, 255, 255, 0.98);
+  font-variant-numeric: tabular-nums;
+}
+
+.mission-overlay {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: min(28rem, 92vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+  font-family: var(--font-saira);
+  --overlay-prefix-width: clamp(21px, calc(21px + (100vw - 1360px) * 0.0428571429), 36px);
+  --overlay-prefix-font-size: clamp(15px, calc(15px + (100vw - 1360px) * 0.0371428571), 28px);
+  --overlay-time-font-size: clamp(24px, calc(24px + (100vw - 1360px) * 0.0342857143), 36px);
+  --overlay-line-font-size: clamp(12px, calc(12px + (100vw - 1360px) * 0.0114285714), 16px);
+}
+
+.mission-overlay-clock {
+  display: inline-flex;
+  align-items: center;
+  height: var(--overlay-time-font-size);
+  gap: 10px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.overlay-hold-indicator {
+  width: var(--overlay-prefix-font-size);
+  height: var(--overlay-prefix-font-size);
+  opacity: 0;
+  background: url("pause.svg") center / contain no-repeat;
+}
+
+.overlay-hold-indicator.active {
+  opacity: 1;
+  animation: holdPulse 1.2s ease-in-out infinite;
+}
+
+.mission-overlay-prefix {
+  display: inline-flex;
+  width: var(--overlay-prefix-width);
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  font-size: var(--overlay-prefix-font-size);
+  color: rgba(245, 245, 244, 0.7);
+  font-weight: 500;
+  font-family: var(--font-saira);
+}
+
+.mission-overlay-time {
+  font-family: var(--font-saira);
+  font-size: var(--overlay-time-font-size);
+  color: rgb(255, 255, 255);
+  font-weight: 400;
+}
+
+.mission-overlay-line {
+  font-size: var(--overlay-line-font-size);
+  color: rgba(245, 245, 244, 0.7);
+  font-weight: 500;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.overlay-payload {
+  margin-left: 24px;
+}
+
+.timeline-mount {
+  position: relative;
+  z-index: 20;
+  width: 100vw;
+  height: 200px;
+  overflow: hidden;
+}
+
+body.viewer-mode-obs .viewer-layout-root .timeline-mount,
+body.viewer-mode-video .viewer-layout-root .timeline-mount {
+  width: 1920px;
+  height: 200px;
+}
+
+.mission-timeline-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.axis-shell {
+  position: relative;
+  height: 240px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-axis);
+  overflow: hidden;
+}
+
+.axis-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--warn) 72%, transparent), color-mix(in srgb, var(--accent) 80%, transparent), color-mix(in srgb, var(--warn) 72%, transparent));
+  transform: translateY(-1px);
+}
+
+.axis-now-line {
+  position: absolute;
+  top: 14px;
+  bottom: 10px;
+  left: 33.333%;
+  width: 2px;
+  background: var(--warn);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--warn) 52%, transparent);
+}
+
+.axis-now-tag {
+  position: absolute;
+  left: 33.333%;
+  top: 10px;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--warn);
+  background: var(--surface-axis-tag);
+  border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--line));
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.axis-grid,
+.axis-nodes {
+  position: absolute;
+  inset: 0;
+}
+
+.axis-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: color-mix(in srgb, var(--line) 68%, transparent);
+}
+
+.axis-tick span {
+  position: absolute;
+  bottom: 10px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.axis-node {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.axis-node .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.axis-node.stage .dot {
+  background: #5ca8ff;
+  box-shadow: 0 0 10px rgba(92, 168, 255, 0.48);
+}
+
+.axis-node.event .dot {
+  background: #ffbf5d;
+  box-shadow: 0 0 10px rgba(255, 191, 93, 0.48);
+}
+
+.axis-node.observation .dot {
+  background: #f06fa8;
+  box-shadow: 0 0 10px rgba(240, 111, 168, 0.48);
+}
+
+.axis-node .label {
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.axis-node .meta {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.axis-node.past {
+  opacity: 0.56;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@keyframes holdPulse {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.theme-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+}
+
+.theme-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 8, 18, 0.62);
+}
+
+.theme-panel {
+  position: relative;
+  z-index: 1;
+  width: min(760px, 94vw);
+  max-height: 86vh;
+  overflow: auto;
+  padding: 14px;
+}
+
+.theme-grid {
+  margin: 12px 0 14px;
+  padding: 2px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.theme-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px;
+  background: var(--surface-1);
+  cursor: pointer;
+}
+
+.theme-card.active {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent) inset;
+}
+
+.theme-card .name {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.theme-preview-gradient {
+  width: 56%;
+  max-width: 82px;
+  margin: 0 auto;
+  height: 18px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-panel .row {
+  margin: 0;
+  padding: 2px 2px 0;
+  justify-content: flex-end;
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 34%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+@keyframes nebulaFloat {
+  from {
+    transform: translate(-1%, -1%) scale(1);
+  }
+  to {
+    transform: translate(1.4%, 1%) scale(1.05);
+  }
+}
+
+@media (max-width: 980px) {
+  .timeline-info {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-title {
+    gap: 14px;
+  }
+
+  .mission-overlay {
+    bottom: 12px;
+  }
+
+  .visitor-shell {
+    padding: 14px 14px 220px;
+  }
+
+  .timeline-mount {
+    height: 180px;
+  }
+
+  .timeline-side {
+    width: min(47vw, 380px);
+    height: 166px;
+  }
+
+  .timeline-side-left {
+    padding-left: 12px;
+  }
+
+  .timeline-side-right {
+    padding-right: 12px;
+  }
+
+  .timeline-side-bg {
+    width: min(45vw, 360px);
+    height: 108px;
+  }
+
+  .telemetry-gauges {
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  .telemetry-gauge-slot {
+    width: 138px;
+    height: 138px;
+  }
+
+  .telemetry-gauge-label,
+  .telemetry-gauge-unit {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+  }
+
+  .telemetry-engine-label,
+  .telemetry-engine-meta {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+
+  .telemetry-gauge-value {
+    font-size: 30px;
+  }
+
+  .hero-meta-row {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .hero-meta-left {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .theme-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .timeline-side {
+    width: min(100vw, 340px);
+    height: 140px;
+  }
+
+  .timeline-side-left {
+    padding-left: 0;
+  }
+
+  .timeline-side-right {
+    padding-right: 0;
+  }
+
+  .timeline-side-bg {
+    display: none;
+  }
+
+  .telemetry-gauges {
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .telemetry-gauge-slot {
+    width: 138px;
+    height: 138px;
+  }
+
+  .telemetry-gauge-label,
+  .telemetry-gauge-unit {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+
+  .telemetry-engine-label,
+  .telemetry-engine-meta {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .telemetry-gauge-value {
+    font-size: 21px;
+  }
+}
+
+.mission-overlay-clock.waiting-launch .mission-overlay-prefix,
+.mission-overlay-clock.waiting-launch .overlay-hold-indicator { display: none; }
+.mission-overlay-clock.waiting-launch .mission-overlay-time,
+.waiting-launch-text { animation: holdPulse 1.2s ease-in-out infinite; }
+
+.mission-overlay-clock.waiting-launch .mission-overlay-time,
+#missionClock.waiting-launch-text {
+  letter-spacing: 0.1em;
+}
+
+#missionClock,
+.mission-overlay-prefix,
+.mission-overlay-time {
+  font-family: var(--font-saira);
+  font-variant-numeric: tabular-nums;
+}
+
+#missionClock.waiting-launch-text {
+  font-size: clamp(32px, 4.5vw, 64px);
+}
+
+.mission-overlay-clock.waiting-launch .mission-overlay-time {
+  font-size: calc(var(--overlay-time-font-size) * 0.8);
+}

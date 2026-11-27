@@ -40,7 +40,9 @@ async function replay(){
   v.setValue(r.v);h.setValue(r.h);$('distance').textContent=r.x.toFixed(1);$('clock').textContent=r.clock;$('phase').textContent=r.event;
   $('seek').value=i;if(document.activeElement!==$('second')||force)$('second').value=i;
  }
- function seek(s){if(Number.isFinite(s)){rebase(Math.round(s));draw(true)}}
+ function syncObs(){const state=JSON.stringify({s:Math.min(end,elapsed()),at:Date.now(),rate,run:running,loop:$('loop').checked,m:$('model').value});$('obsReplay').href='obs.html?mode=replay&state='+encodeURIComponent(state);try{localStorage.setItem('tiangong:obs-replay:v1',state)}catch{}}
+ function seek(s){if(Number.isFinite(s)){rebase(Math.round(s));draw(true);syncObs()}}
+ $('obsReplay').addEventListener('pointerdown',syncObs);$('controls').addEventListener('click',syncObs);$('controls').addEventListener('change',syncObs);$('model').addEventListener('change',syncObs);syncObs();
  $('play').onclick=()=>{const t=elapsed();running=!running;rebase(running&&t>=end?0:t);draw(true)};
  $('seek').oninput=e=>seek(e.target.valueAsNumber);$('second').onchange=e=>seek(e.target.valueAsNumber);$('second').onblur=()=>draw(true);
  $('rate').onchange=e=>{rebase(elapsed());rate=+e.target.value};$('model').onchange=()=>draw(true);
