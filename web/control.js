@@ -1,3 +1,4 @@
+import {returnScenario} from './return-scenario.js';
 import {landingRange} from './return-timing.js';
 import {liveRecords} from './obs-timeline.js';
 const $=id=>document.getElementById(id);
@@ -5,14 +6,17 @@ const fmt=(t,options)=>new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai'
 const load=async url=>{const r=await fetch(url);if(!r.ok)throw Error(r.status);return r};
 async function brief(){
  const m=await (await load('data/mission.json')).json(), now=Date.now(), day=86400000;
+ const snap=await fetch('data/latest.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
+ const scenario=returnScenario(m,snap?.notices?.data?.items,now);
  const stages=['船站分离','轨返分离','制动点火','推返分离','进入黑障','离开黑障','主伞打开','着陆'];
  const records=liveRecords(m,now), grid=$('currentEvents');grid.replaceChildren();
- for(const name of new Set([...stages,...records.map(r=>r.name.replace(/^预计·/,''))])){const hit=records.filter(r=>r.name.replace(/^预计·/,'')===name).at(-1),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=name;dd.textContent=hit?(hit.name.startsWith('预计·')?'预计 ':'')+fmt(hit.at,{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'待公布';grid.append(dt,dd)}
+ for(const name of new Set([...stages,...records.map(r=>r.name.replace(/^预计·/,''))])){const hit=records.filter(r=>r.name.replace(/^预计·/,'')===name).at(-1),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=name;dd.textContent=hit?(hit.name.startsWith('预计·')?'预计 ':'')+fmt(hit.at,{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):scenario?.stages[name]?'情景推算 · '+scenario.stages[name]:'待公布';grid.append(dt,dd)}
  const offsets=m.history.map(h=>Date.parse(h.landing)-Date.parse(h.arrival));
  const start=Date.parse(m.arrival+'T00:00:00+08:00'), low=start+Math.min(...offsets), high=start+Math.max(...offsets);
  const range=landingRange(m.confirmedSeparation,m.returnFlights||[],now);
  if(m.officialReturn && Date.parse(m.officialReturn.published)<=now){$('window').textContent=m.officialReturn.label;$('basis').textContent='官方返回安排'}
  else if(range){$('window').textContent=[range.from,range.to].map(t=>fmt(t,{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})).join(' – ');$('basis').textContent='公开撤离时刻 · 历史时长类比'}
+ else if(scenario){$('window').textContent=scenario.landing;$('basis').textContent='着陆情景推算 · 假设 A6096/26 用于本次回收且着陆发生在限制窗口内；关联尚未证实'}
  else if(now<high+day && offsets.length){$('window').textContent=[low,high].map(t=>fmt(t,{month:'long',day:'numeric'})).join(' – ');$('basis').textContent=`日期参考 · ${offsets.length} 次历史轮换`}
  else {$('window').textContent='等待官方返回安排';$('basis').textContent='历史窗口已过'}
 }
