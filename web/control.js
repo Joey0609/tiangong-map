@@ -1,9 +1,13 @@
 import {landingRange} from './return-timing.js';
+import {liveRecords} from './obs-timeline.js';
 const $=id=>document.getElementById(id);
 const fmt=(t,options)=>new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',...options}).format(t);
 const load=async url=>{const r=await fetch(url);if(!r.ok)throw Error(r.status);return r};
 async function brief(){
  const m=await (await load('data/mission.json')).json(), now=Date.now(), day=86400000;
+ const stages=['船站分离','轨返分离','制动点火','推返分离','进入黑障','离开黑障','主伞打开','着陆'];
+ const records=liveRecords(m,now), grid=$('currentEvents');grid.replaceChildren();
+ for(const name of new Set([...stages,...records.map(r=>r.name.replace(/^预计·/,''))])){const hit=records.filter(r=>r.name.replace(/^预计·/,'')===name).at(-1),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=name;dd.textContent=hit?(hit.name.startsWith('预计·')?'预计 ':'')+fmt(hit.at,{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'待公布';grid.append(dt,dd)}
  const offsets=m.history.map(h=>Date.parse(h.landing)-Date.parse(h.arrival));
  const start=Date.parse(m.arrival+'T00:00:00+08:00'), low=start+Math.min(...offsets), high=start+Math.max(...offsets);
  const range=landingRange(m.confirmedSeparation,m.returnFlights||[],now);
@@ -48,4 +52,4 @@ async function replay(){
  $('rate').onchange=e=>{rebase(elapsed());rate=+e.target.value};$('model').onchange=()=>draw(true);
  $('controls').disabled=false;draw(true);setInterval(()=>{if(running&&!document.hidden)draw()},100);document.addEventListener('visibilitychange',()=>{if(!document.hidden)draw(true)});
 }
-replay().catch(()=>{$('status').textContent='仿真数据读取失败，请稍后刷新。'});
+$('archive').addEventListener('toggle',function startArchive(){if(!this.open)return;this.removeEventListener('toggle',startArchive);replay().catch(()=>{$('status').textContent='仿真数据读取失败，请稍后刷新。'})});
